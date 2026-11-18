@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paigham</title>
+<meta name="description" content="Paigham: journal entries, essays and notes.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Noto+Nastaliq+Urdu:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f2ec; --ink:#45433f; --soft:#7a766e; --line:#dcd8cd; --accent:#34436b;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--paper:#1d1c1a; --ink:#e8e5dd; --soft:#a29d92; --line:#36342f; --accent:#9fb2e6; color-scheme:dark;}
+}
+:root[data-theme="dark"]{--paper:#1d1c1a; --ink:#e8e5dd; --soft:#a29d92; --line:#36342f; --accent:#9fb2e6; color-scheme:dark;}
+*{box-sizing:border-box}
+html{scroll-padding-top:1rem}
+body{margin:0;background:var(--paper);color:var(--ink);font:1.125rem/1.7 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.wrap{max-width:42rem;margin:0 auto;padding:0 1.5rem}
+
+header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:1.5rem;padding-bottom:1.5rem}
+.brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;font-weight:600;font-size:1.25rem}
+.brand img{width:2.5rem;height:2.5rem;border-radius:.6rem;display:block}
+nav{display:flex;gap:1.5rem;font-size:1rem}
+nav a{text-decoration:none;color:var(--soft)}
+nav a:hover,nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-underline-offset:.35em}
+
+.hero{padding:3.5rem 0 2rem}
+.urdu{font-family:"Noto Nastaliq Urdu",serif;font-weight:500;font-size:clamp(3.5rem,14vw,6rem);line-height:1.9;margin:0;direction:rtl;text-align:left;display:block}
+.hero p{margin:.5rem 0 0;font-size:1.25rem;color:var(--soft);max-width:30rem}
+
+.dots{display:flex;gap:.45rem;margin:2.5rem 0}
+.dots i{width:.7rem;height:.55rem;background:var(--ink);border-radius:55% 45% 60% 40%;transform:rotate(-24deg);display:block}
+.dots i:nth-child(2){transform:rotate(12deg) translateY(.25rem)}
+.dots i:nth-child(3){transform:rotate(-8deg)}
+
+.row{display:grid;grid-template-columns:9rem 1fr;gap:0 1.5rem;padding:1.5rem 0;border-top:1px solid var(--line);text-decoration:none}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row time{font-size:.95rem;color:var(--soft);padding-top:.35rem}
+.row h2{margin:0;font-size:1.5rem;line-height:1.3;font-weight:600}
+.row p{margin:.35rem 0 0;color:var(--soft)}
+.row:hover h2{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
+
+.meta{color:var(--soft);font-size:1rem;margin:2rem 0 0}
+article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 2rem;font-weight:600;letter-spacing:-.01em}
+.prose>*+*{margin-top:1.25rem}
+.prose h2{font-size:1.5rem;line-height:1.3;margin-top:2.5rem}
+.prose h3{font-size:1.2rem;margin-top:2rem}
+.prose a{color:var(--accent);text-underline-offset:.2em}
+.prose blockquote{margin-left:0;padding-left:1.25rem;border-left:3px solid var(--ink);font-style:italic}
+.prose img{max-width:100%;height:auto;border-radius:.4rem}
+.prose pre{overflow-x:auto;padding:1rem;border:1px solid var(--line);border-radius:.4rem;font-size:.95rem}
+.prose code{font-size:.9em}
+.back{display:inline-block;font-size:1rem;color:var(--soft)}
+.empty{color:var(--soft);padding:2rem 0}
+
+.form{display:grid;gap:1rem;max-width:22rem}
+.form label{display:grid;gap:.35rem;font-size:1rem;color:var(--soft)}
+.form input{font:inherit;color:var(--ink);padding:.65rem .8rem;border:1px solid var(--line);background:transparent;border-radius:.4rem}
+.btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer}
+.linkbtn{font:inherit;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
+.note{color:var(--soft);font-size:1rem;margin:0}
+.flinks{display:flex;gap:1.25rem}
+footer{margin-top:5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+@media (max-width:34rem){
+  .row{grid-template-columns:1fr}
+  .row time{padding:0 0 .25rem}
+  body{font-size:1.0625rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Paigham home"><img src="logo.png" alt="Paigham logo"> Paigham</a>
+    <nav aria-label="Main">
+      <a href="#" id="nav-home">Writing</a>
+      <a href="#about" id="nav-about">About</a>
+      <a href="#login" id="nav-login">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="app" tabindex="-1"></main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> Paigham</span>
+    <span class="flinks"><a href="mailto:sulaiman.htg@gmail.com">Email</a><a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a></span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="posts.js"></script>
+<script>
+(function () {
+  var app = document.getElementById("app");
+  var posts = (window.POSTS || []).slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+  document.getElementById("year").textContent = new Date().getFullYear();
+  var cfg = window.PAIGHAM_CONFIG || {};
+  var sb = (cfg.supabaseUrl && cfg.supabaseKey && window.supabase)
+    ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { flowType: "pkce" } }) : null;
+  var user = null, mode = "login";
+
+  function fmt(d) {
+    return new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  }
+  function mins(text) { return Math.max(1, Math.round(text.split(/\s+/).length / 220)); }
+  function md(text) {
+    try { return window.marked ? marked.parse(text) : "<p>" + text.replace(/</g, "&lt;") + "</p>"; }
+    catch (e) { return "<p>" + text.replace(/</g, "&lt;") + "</p>"; }
+  }
+  var DOTS = '<div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>';
+
+  function home() {
+    document.title = "Paigham";
+    var html = '<section class="hero"><span class="urdu" lang="ur">پیغام</span>' +
+      '<p>Journal entries, essays and notes. Paigham means message.</p></section>' + DOTS;
+    if (!posts.length) {
+      html += '<p class="empty">No posts yet. Add your first one in posts.js.</p>';
+    } else {
+      html += '<div>' + posts.map(function (p) {
+        return '<a class="row" href="#' + encodeURIComponent(p.slug) + '">' +
+          '<time datetime="' + p.date + '">' + fmt(p.date) + '</time>' +
+          '<div><h2></h2><p></p></div></a>';
+      }).join("") + '</div>';
+    }
+    app.innerHTML = html;
+    var rows = app.querySelectorAll(".row");
+    posts.forEach(function (p, i) {
+      rows[i].querySelector("h2").textContent = p.title;
+      rows[i].querySelector("p").textContent = p.excerpt || "";
+    });
+    setNav("home");
+  }
+
+  function post(slug) {
+    var p = posts.filter(function (x) { return x.slug === slug; })[0];
+    if (!p) { app.innerHTML = '<p class="empty">That post doesn’t exist. <a href="#">Back to all posts</a></p>'; setNav(""); return; }
+    document.title = p.title + " · Paigham";
+    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div>' + DOTS +
+      '<a class="back" href="#">Back to all posts</a></article>';
+    app.querySelector(".meta").textContent = fmt(p.date) + (p.tag ? " · " + p.tag : "") + " · " + mins(p.body) + " min read";
+    app.querySelector("h1").textContent = p.title;
+    app.querySelector(".prose").innerHTML = md(p.body);
+    setNav("");
+  }
+
+  function about() {
+    document.title = "About · Paigham";
+    /* Edit the text below to tell people about you and how to reach you */
+    app.innerHTML = '<article><h1>About</h1><div class="prose">' +
+      '<p>Paigham is my space for writing. I share what I’m learning, thinking and making.</p>' +
+      '<p>Say hello: <a href="mailto:sulaiman.htg@gmail.com">sulaiman.htg@gmail.com</a>, or find me on <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a>.</p></div>' + DOTS +
+      '<a class="back" href="#">Back to all posts</a></article>';
+    setNav("about");
+  }
+
+  function login() {
+    document.title = "Log in · Paigham";
+    setNav("login");
+    if (!sb) {
+      app.innerHTML = '<article><h1>Log in</h1><div class="prose"><p>Login isn’t connected yet. Add your Supabase keys in config.js to turn it on.</p></div>' + DOTS + '<a class="back" href="#">Back to all posts</a></article>';
+      return;
+    }
+    if (user) {
+      app.innerHTML = '<article><h1>Your account</h1><div class="prose"><p>Logged in as <strong class="who"></strong>.</p></div><p><button class="btn" id="out" type="button">Log out</button></p></article>';
+      app.querySelector(".who").textContent = user.email;
+      document.getElementById("out").onclick = function () { sb.auth.signOut(); };
+      return;
+    }
+    var signup = mode === "signup";
+    app.innerHTML = '<article><h1>' + (signup ? "Create account" : "Log in") + '</h1>' +
+      '<form class="form" id="auth"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
+      '<label>Password<input type="password" name="password" minlength="6" autocomplete="' + (signup ? "new-password" : "current-password") + '" required></label>' +
+      '<button class="btn" type="submit">' + (signup ? "Create account" : "Log in") + '</button>' +
+      '<p class="note" role="status" id="msg"></p></form>' +
+      '<p class="note" style="margin-top:1.5rem">' + (signup ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
+    var msg = function (t) { document.getElementById("msg").textContent = t; };
+    document.getElementById("flip").onclick = function () { mode = signup ? "login" : "signup"; login(); };
+    document.getElementById("auth").onsubmit = function (e) {
+      e.preventDefault();
+      var email = e.target.email.value.trim(), pw = e.target.password.value;
+      msg("Working…");
+      var call = signup
+        ? sb.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: location.origin + location.pathname } })
+        : sb.auth.signInWithPassword({ email: email, password: pw });
+      call.then(function (r) {
+        if (r.error) { msg(r.error.message); return; }
+        if (signup && !r.data.session) msg("Check your email to confirm your account, then log in.");
+      });
+    };
+  }
+
+  function setNav(which) {
+    ["home", "about", "login"].forEach(function (k) {
+      var el = document.getElementById("nav-" + k);
+      if (k === which) el.setAttribute("aria-current", "page"); else el.removeAttribute("aria-current");
+    });
+  }
+
+  function route() {
+    var h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+    if (!h) home(); else if (h === "about") about(); else if (h === "login") login(); else post(h);
+    window.scrollTo(0, 0);
+  }
+  function refresh() {
+    document.getElementById("nav-login").textContent = user ? "Account" : "Log in";
+    if (location.hash === "#login") login();
+  }
+  if (sb) {
+    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; refresh(); });
+    sb.auth.onAuthStateChange(function (_e, s) { user = s ? s.user : null; refresh(); });
+  }
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
