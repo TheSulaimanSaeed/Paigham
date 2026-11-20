@@ -428,10 +428,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       document.getElementById("out").onclick = function () { sb.auth.signOut(); };
       return;
     }
+    document.getElementById("out").onclick = function () { sb.auth.signOut(); };
+      return;
+    }
     var su = mode === "signup";
+    var isInApp = /Instagram|FBAN|FBAV|WhatsApp/i.test(navigator.userAgent);
+    var inAppWarning = isInApp
+      ? '<p class="note" style="padding:.75rem;border:1px solid var(--line);border-radius:.4rem;margin-bottom:1rem"><strong>Tip:</strong> You are viewing Paigham inside an app browser, which clears logins when closed. Tap <strong>•••</strong> and choose <strong>Open in Browser</strong> to stay logged in.</p>'
+      : '';
     app.innerHTML = '<article><h1>' + (su ? "Create account" : "Log in") + '</h1>' +
+      inAppWarning +
       '<form class="form" id="auth" style="max-width:22rem"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
-      '<label>Password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
       '<button class="btn" type="submit">' + (su ? "Create account" : "Log in") + '</button><p class="note" role="status" id="msg"></p></form>' +
       '<p class="note" style="margin-top:1.5rem">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
     var msg = function (t) { document.getElementById("msg").textContent = t; };
