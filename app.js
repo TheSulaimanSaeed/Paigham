@@ -40,13 +40,13 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       c: "#0d3b66",
       subs: { all: "All Branches", physics: "Physics", chemistry: "Chemistry", biology: "Biology" }
     },
-    models: {
-      t: "Model Organisms",
-      d: "Zebrafish (Danio rerio), Drosophila, mice, C. elegans, and experimental disease models researchers are working on.",
+    art: {
+      t: "Art",
+      d: "Design, video, UX/UI and visual storytelling: projects, case studies, process notes and work in progress.",
       c: "#0f766e"
     },
-    geopolitics: {
-      t: "Geopolitics",
+    politics: {
+      t: "Politics",
       d: "Share thoughts, essays, and analysis on global power, borders, resources, and world affairs.",
       c: "#4a3f28"
     },
@@ -106,7 +106,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     if (clean) return '<img class="' + cls + '" src="' + esc(clean) + '" alt="' + esc(name) + '">';
     return '<span class="' + cls + '" aria-hidden="true">' + esc(initials(name)) + '</span>';
   }
-  function setBg(k) { document.getElementById("photo").style.setProperty("--photo", "url(img/" + (k || "home") + ".jpg)"); }
+  function setBg(k) { var p = document.getElementById("photo"); p.dataset.k = k || "home"; p.style.setProperty("--photo", "url(img/" + (k || "home") + ".jpg)"); }
   function setNav(which, sec) {
     ["write", "about", "login"].forEach(function (k) {
       var el = document.getElementById("nav-" + k);
@@ -275,7 +275,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '</div>' +
       '<div class="side-box">' +
         '<h3>Publish Your Work</h3>' +
-        '<p class="note" style="font-size:.86rem;margin-bottom:.85rem">Upload review articles across Physics, Chemistry &amp; Biology, share zebrafish or model organism findings, or post thoughts on Geopolitics &amp; Philosophy.</p>' +
+        '<p class="note" style="font-size:.86rem;margin-bottom:.85rem">Upload review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post thoughts on Politics &amp; Philosophy.</p>' +
         '<a class="btn" style="width:100%;min-height:2.4rem;font-size:.88rem" href="#write">+ Submit Article / PDF</a>' +
       '</div>' +
     '</aside>';
@@ -285,8 +285,8 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     document.title = "Paigham — Research & Writing Network | M. Sulaiman Saeed"; setBg("home");
     var list = all().slice(0, 12);
     app.innerHTML = '<section class="hero">' +
-      '<h1>Open Science, Model Organisms, Geopolitics &amp; Philosophy.</h1>' +
-      '<p>Founded by <strong>M. Sulaiman Saeed</strong> — a collaborative space to publish review articles, share zebrafish and model organism research, upload PDFs &amp; figures, and exchange ideas.</p>' +
+      '<h1>Science, Art, Politics &amp; Philosophy.</h1>' +
+      '<p>Founded by <strong>M. Sulaiman Saeed</strong> — a collaborative space to publish review articles, share art, design and UX/UI work, upload PDFs &amp; figures, and exchange ideas.</p>' +
       '<div class="hero-actions">' +
         '<a class="btn" href="#write">+ Upload Review Article / Post</a>' +
         '<a class="btn secondary" href="#login">' + (user ? "My Researcher Profile" : "Join with Email Code") + '</a>' +
@@ -319,8 +319,8 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     }
 
     var ctaLabel = k === "science" ? "+ Upload Review Article / Study"
-                 : k === "models" ? "+ Share Model Organism Work"
-                 : k === "geopolitics" ? "+ Share Geopolitical Thought"
+                 : k === "art" ? "+ Share Art and Design Work"
+                 : k === "politics" ? "+ Share Political Thought"
                  : "+ Share Philosophical Thought";
 
     app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p>' +
@@ -535,7 +535,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   function about() {
     document.title = "About M. Sulaiman Saeed · Paigham"; setBg("home");
     app.innerHTML = '<article class="article-card"><h1>About Paigham</h1><div class="prose">' +
-      '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — an open research and writing platform built for students, researchers, and curious minds to publish review articles across Physics, Chemistry, and Biology, share model organism experiments, and discuss geopolitics and philosophy.</p>' +
+      '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — an open research and writing platform built for students, researchers, and curious minds to publish review articles across Physics, Chemistry, and Biology, share art, design and video work, and discuss politics and philosophy.</p>' +
       '<h2>About the Founder</h2>' +
       '<div class="founder-box">' +
       '<img id="founder-dp" class="founder-dp" src="dp.jpg" alt="M. Sulaiman Saeed">' +
@@ -821,7 +821,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '<form class="form" id="auth">' +
         (su ? '<label>Full Name <span class="req">*</span><input name="name" maxlength="80" placeholder="e.g. Muhammad Sulaiman Saeed" required></label>' +
               '<label>What do you study? <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Political Science" required></label>' +
-              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, geopolitics" required></label>' : '') +
+              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, UX design, politics" required></label>' : '') +
         '<label>Email <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
         '<label>Password' + (su ? ' (at least 8 characters)' : '') + ' <span class="req">*</span><input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
         (su ? '<label>Confirm Password <span class="req">*</span><input type="password" name="password2" minlength="8" autocomplete="new-password" required></label>' : '') +
@@ -873,7 +873,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     document.title = "Publish on Paigham · Paigham"; setBg("home"); setNav("write", "");
     if (!sb) return needSb("Publish on Paigham");
     if (!user) {
-      app.innerHTML = '<article class="article-card"><h1>Publish on Paigham</h1><p class="note">Log in or verify your email first to publish review articles across Science, share Model Organism work, or post Geopolitics &amp; Philosophy thoughts. <a href="#login" style="color:var(--accent);font-weight:600">Log in or create an account →</a></p></article>';
+      app.innerHTML = '<article class="article-card"><h1>Publish on Paigham</h1><p class="note">Log in or verify your email first to publish review articles across Science, share Art and design work, or post Politics &amp; Philosophy thoughts. <a href="#login" style="color:var(--accent);font-weight:600">Log in or create an account →</a></p></article>';
       return;
     }
 
@@ -886,7 +886,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
     app.innerHTML = '<article class="article-card">' +
       '<h1>Publish Review Article, Research Note, or Thought</h1>' +
-      '<p class="note">Submit review articles across Physics, Chemistry &amp; Biology, share zebrafish or model organism findings, or post Geopolitics &amp; Philosophy reflections. Supports Markdown, photos, and PDFs (max 5 MB).</p>' +
+      '<p class="note">Submit review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post Politics &amp; Philosophy reflections. Supports Markdown, photos, and PDFs (max 5 MB).</p>' +
       '<form class="form" id="wf" style="margin-top:1.35rem">' +
         '<label>Category<select name="section" id="sec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
         '<label id="sub-wrap">Science Branch<select name="sub_section">' +
@@ -912,7 +912,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     var typeSel = document.getElementById("type-sel");
     if (defaultSec && S[defaultSec]) {
       secSel.value = defaultSec;
-      if (defaultSec === "geopolitics" || defaultSec === "philosophy") typeSel.value = "thought";
+      if (defaultSec === "politics" || defaultSec === "philosophy") typeSel.value = "thought";
     }
     function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
     secSel.onchange = toggleSub;
@@ -976,6 +976,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     var raw; try { raw = decodeURIComponent(location.hash.replace(/^#\/?/, "")); } catch (_e) { raw = ""; }
     var parts = raw.split("?");
     var h = parts[0];
+    if (h === "geopolitics") h = "politics"; else if (h === "models") h = "art";
     var params = new URLSearchParams(parts[1] || "");
     if (!h) home();
     else if (S[h]) section(h);

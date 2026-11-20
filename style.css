@@ -448,3 +448,27 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   footer .wrap{flex-direction:column;gap:.75rem}
 }
 @media (prefers-reduced-motion:reduce){.stage .rig,.photo,.card,.pcard,.btn{transition:none}}
+
+/* ---- Human-made look: warm paper, serif type, thin lines, no glossy shadows ---- */
+:root{--bg:#f3eee4;--bg-rgb:243,238,228;--surface:#fbf8f1;--surface-alt:#ece5d6;--ink:#26221c;--soft:#6a6153;--line:#d8cfbc;--accent:#8a3b22;--accent-hover:#6e2d19;--accent-ink:#fbf8f1;--teal:#4d6a4f;--teal-bg:#e4e9d8;--sans:"Newsreader",Georgia,serif;--shadow:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1713;--bg-rgb:26,23,19;--surface:#221e19;--surface-alt:#2b261f;--ink:#ece4d4;--soft:#a89d89;--line:#3a3329;--accent:#d98a64;--accent-hover:#e8a283;--accent-ink:#1a1713;--teal:#9bb98d;--teal-bg:rgba(155,185,141,.14);--shadow:none}}
+:root[data-theme="dark"]{--bg:#1a1713;--bg-rgb:26,23,19;--surface:#221e19;--surface-alt:#2b261f;--ink:#ece4d4;--soft:#a89d89;--line:#3a3329;--accent:#d98a64;--accent-hover:#e8a283;--accent-ink:#1a1713;--teal:#9bb98d;--teal-bg:rgba(155,185,141,.14);--shadow:none}
+body{font-family:var(--serif);font-size:1.0625rem;line-height:1.65}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.012em}
+.tabs a{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:.3rem .15rem;font-weight:500}
+.tabs a:hover{border-bottom-color:var(--accent);color:var(--accent)}
+.tabs a[aria-current="page"]{background:transparent;color:var(--accent);border-bottom-color:var(--accent)}
+.card,.pcard,.article-card,.media-wrap,.pdf-bar,.founder-box,.btn,.badge,input,textarea,select{border-radius:3px;box-shadow:none}
+.pcard,.article-card{background:var(--surface);border:1px solid var(--line)}
+.btn,.badge{font-weight:600}
+/* Section backgrounds: your photo (img/<name>.jpg) on top, painted colour wash underneath if the photo is missing */
+.photo{opacity:1;background:var(--photo,none) center/cover no-repeat,var(--g,none)}
+.photo::after{content:"";position:absolute;inset:0;background:rgba(var(--bg-rgb),.66)}
+.photo[data-k="home"]{--g:radial-gradient(60% 50% at 18% 15%,#e6c59a,transparent 70%),radial-gradient(50% 60% at 88% 28%,#b7c4a4,transparent 70%),radial-gradient(70% 60% at 50% 100%,#d6a083,transparent 70%),#efe6d4}
+.photo[data-k="science"]{--g:radial-gradient(60% 55% at 15% 20%,#a9c4b8,transparent 70%),radial-gradient(55% 60% at 90% 40%,#c9d5b0,transparent 70%),radial-gradient(70% 50% at 40% 100%,#9bb3c2,transparent 70%),#e8eadb}
+.photo[data-k="art"]{--g:radial-gradient(55% 55% at 20% 25%,#e3a27f,transparent 70%),radial-gradient(50% 60% at 85% 20%,#e9c46a,transparent 70%),radial-gradient(70% 60% at 60% 100%,#c9808f,transparent 70%),#f0e0cc}
+.photo[data-k="politics"]{--g:radial-gradient(60% 55% at 20% 20%,#9aa5b1,transparent 70%),radial-gradient(55% 60% at 85% 35%,#c9a66b,transparent 70%),radial-gradient(70% 60% at 50% 100%,#8b8f98,transparent 70%),#e4dfd3}
+.photo[data-k="philosophy"]{--g:radial-gradient(60% 55% at 25% 20%,#a89bb8,transparent 70%),radial-gradient(55% 60% at 85% 30%,#8fa3b5,transparent 70%),radial-gradient(70% 60% at 45% 100%,#c9b49a,transparent 70%),#e6e0e6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .photo::after{background:rgba(var(--bg-rgb),.8)}}
+:root[data-theme="dark"] .photo::after{background:rgba(var(--bg-rgb),.8)}
+body::after{content:"";position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.06;mix-blend-mode:multiply;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
