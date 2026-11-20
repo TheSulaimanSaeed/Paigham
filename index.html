@@ -85,7 +85,7 @@ article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 1.5
 .btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer;justify-self:start}
 .linkbtn{font:inherit;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
 .note{color:var(--soft);font-size:1rem;margin:0}
-.flinks{display:flex;gap:1.25rem}
+.flinks{display:flex;gap:1.25rem;flex-wrap:wrap}
 footer{margin-top:5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem;position:relative;z-index:2}
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 @media (max-width:34rem){.row{grid-template-columns:1fr}.row time{padding:0 0 .25rem}body{font-size:1.0625rem}}
@@ -113,7 +113,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 <footer>
   <div class="wrap">
     <span>&copy; <span id="year"></span> Paigham</span>
-    <span class="flinks"><a href="mailto:sulaiman.htg@gmail.com">Email</a><a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a></span>
+    <span class="flinks">
+      <a href="mailto:admin@paigham.live">Email</a>
+      <a href="mailto:feedback@paigham.live">Feedback</a>
+      <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">Instagram</a>
+    </span>
   </div>
 </footer>
 
@@ -208,8 +212,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     document.title = "About us · Paigham"; setBg("home");
     app.innerHTML = '<article><h1>About us</h1><div class="prose">' +
       '<p>Paigham is a space for writing on science, criminology, zebrafish research and geopolitics. I share what I’m learning, and anyone can log in and share what they know.</p>' +
-      '<h2>Contact</h2><ul><li>Email: <a href="mailto:sulaiman.htg@gmail.com">sulaiman.htg@gmail.com</a></li>' +
-      '<li>Instagram: <a href="https://instagram.com/thesulaimansaeed">@thesulaimansaeed</a></li></ul>' +
+      '<h2>Contact</h2><ul>' +
+      '<li>Admin Email: <a href="mailto:admin@paigham.live">admin@paigham.live</a></li>' +
+      '<li>Feedback: <a href="mailto:feedback@paigham.live">feedback@paigham.live</a></li>' +
+      '<li>Personal Email: <a href="mailto:sulaiman.htg@gmail.com">sulaiman.htg@gmail.com</a></li>' +
+      '<li>Official Instagram: <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">@paigham.live</a></li>' +
+      '<li>Personal Instagram: <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">@thesulaimansaeed</a></li>' +
+      '</ul>' +
       '<p>Want to write here? <a href="#write">Upload your blog</a>. Posts are reviewed before they go live.</p></div><a class="back" href="#">Back to all posts</a></article>';
     setNav("about", "");
   }
