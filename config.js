@@ -6,6 +6,6 @@
   4. Authentication -> URL Configuration: set Site URL to your domain.
 */
 window.PAIGHAM_CONFIG = {
-  supabaseUrl: "https://xaystacrlzqdrhfptosv.supabase.co/rest/v1/",
+  supabaseUrl: "https://xaystacrlzqdrhfptosv.supabase.co",
   supabaseKey: "sb_publishable_ldLdukfqDBb7jonmk5YB6Q_Uncpck0S"
 };
