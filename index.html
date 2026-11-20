@@ -1252,14 +1252,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       document.getElementById("back-auth").onclick = function () { mode = "signup"; login(); };
       document.getElementById("resend").onclick = function () {
         vmsg("Sending a new code…");
-        sb.auth.resend({ type: "signup", email: pendingEmail }).then(function (r) {
-          vmsg(r.error ? r.error.message : "A fresh verification code has been sent to your Gmail.");
+        sb.auth.signInWithOtp({ email: pendingEmail, options: { shouldCreateUser: true } }).then(function (r) {
+          vmsg(r.error ? r.error.message : "A fresh 6-digit code has been sent to your email.");
         });
       };
       document.getElementById("vform").onsubmit = function (e) {
         e.preventDefault();
         vmsg("Verifying code…");
-        sb.auth.verifyOtp({ email: pendingEmail, token: e.target.token.value.trim(), type: "signup" }).then(function (r) {
+        sb.auth.verifyOtp({ email: pendingEmail, token: e.target.token.value.trim(), type: "email" }).then(function (r) {
           if (r.error) return vmsg(r.error.message);
           mode = "login";
         });
@@ -1336,64 +1336,51 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       return;
     }
 
-    // Step 1: Log In or Create Researcher Account (Compulsory Study & Future Interests)
+    // Step 1: Log In or Create Researcher Account via 6-Digit Email Code (No Custom SMTP required)
     var su = mode === "signup";
     app.innerHTML = '<article class="article-card" style="max-width:34rem;margin:2rem auto">' +
       '<h1>' + (su ? "Join Paigham Research Network" : "Log in to Paigham") + '</h1>' +
-      '<p class="note" style="margin-bottom:1.1rem">' + (su ? "Create your researcher profile. We will send a 6-digit verification code to your Gmail / email." : "Sign in to publish review articles, model organism notes, photos, and PDFs.") + '</p>' +
+      '<p class="note" style="margin-bottom:1.1rem">' + (su ? "Create your researcher profile. We will send a 6-digit login code to your email." : "Enter your email to receive a 6-digit login code — no password needed.") + '</p>' +
       '<form class="form" id="auth">' +
         (su ? '<label>Full Name <span class="req">*</span><input name="name" maxlength="80" placeholder="e.g. Muhammad Sulaiman Saeed" required></label>' +
               '<label>What do you study? (Compulsory) <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Political Science" required></label>' +
               '<label>Future Interests (Compulsory) <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, geopolitics" required></label>' : '') +
         '<label>Email (Gmail / Academic) <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
-        '<label>Password (at least 8 characters) <span class="req">*</span><input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
-        '<button class="btn" type="submit">' + (su ? "Send 6-Digit Verification Code" : "Log in") + '</button>' +
+        '<button class="btn" type="submit">Send 6-Digit Code</button>' +
         '<p class="note" role="status" id="msg"></p>' +
       '</form>' +
       '<div style="margin-top:1.25rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">' +
-        '<span class="note">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New to Paigham? <button class="linkbtn" id="flip" type="button">Create account</button>') + '</span>' +
-        (!su ? '<button class="linkbtn" id="forgot-btn" type="button">Forgot password?</button>' : '') +
+        '<span class="note">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in with code</button>' : 'New to Paigham? <button class="linkbtn" id="flip" type="button">Create researcher account</button>') + '</span>' +
       '</div>' +
     '</article>';
 
     var msg = function (t) { document.getElementById("msg").textContent = t; };
     document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; login(); };
-    var fb = document.getElementById("forgot-btn");
-    if (fb) fb.onclick = function () { mode = "forgot"; login(); };
 
     document.getElementById("auth").onsubmit = function (e) {
       e.preventDefault();
       var f = e.target;
       var email = f.email.value.trim();
-      var pw = f.password.value;
-      msg("Working…");
+      msg("Sending 6-digit code…");
 
+      var otpOptions = { shouldCreateUser: true };
       if (su) {
-        var fullName = f.name.value.trim();
-        var studyField = f.study.value.trim();
-        var futureInt = f.future.value.trim();
-
-        sb.auth.signUp({
-          email: email,
-          password: pw,
-          options: {
-            data: {
-              name: fullName,
-              study_field: studyField,
-              future_interests: futureInt
-            }
-          }
-        }).then(function (r) {
-          if (r.error) return msg(r.error.message);
-          pendingEmail = email;
-          mode = "verify";
-          login();
-        });
-      } else {
-        sb.auth.signInWithPassword({ email: email, password: pw }).then(function (r) {
-          if (r.error) msg(r.error.message);
-        });
+        otpOptions.data = {
+          name: f.name.value.trim(),
+          study_field: f.study.value.trim(),
+          future_interests: f.future.value.trim()
+        };
       }
+
+      sb.auth.signInWithOtp({
+        email: email,
+        options: otpOptions
+      }).then(function (r) {
+        if (r.error) return msg(r.error.message);
+        pendingEmail = email;
+        mode = "verify";
+        login();
+      });
     };
   }
 
