@@ -586,6 +586,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   var profilesList = [];
   var mode = "login"; // login | signup | verify | forgot | reset
   var pendingEmail = "";
+  var recovering = false;
   var community = [];
   var sciSub = "all";
   var lastActionAt = 0;
@@ -1103,7 +1104,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       '<p>I’m <strong>M. Sulaiman Saeed</strong> (Muhammad Sulaiman Saeed), a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my laboratory research centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on global affairs and philosophy.</p>' +
       '</div>' +
       '<h2>How to Participate</h2>' +
-      '<p>Create a free researcher account using your email verification code, set up your profile with your field of study and future research interests, and <a href="#write">submit your review article, photo, or PDF</a>.</p>' +
+      '<p>Create a free researcher account with your email and password (we confirm your email once with a 6-digit code), set up your profile with your field of study and future research interests, and <a href="#write">submit your review article, photo, or PDF</a>.</p>' +
       '<h2>Contact</h2><ul>' +
       '<li>Admin Email: <a href="mailto:admin@paigham.live">admin@paigham.live</a></li>' +
       '<li>Feedback: <a href="mailto:feedback@paigham.live">feedback@paigham.live</a></li>' +
@@ -1161,6 +1162,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
           '<p class="note" role="status" id="msg"></p>' +
         '</form>' +
       '</article>';
+
+      app.querySelector("article").insertAdjacentHTML("beforeend",
+        '<h2 style="font-size:1.2rem;margin-top:2rem">Change password</h2>' +
+        '<form class="form" id="pwf" style="margin-top:.75rem"><label>New password (at least 8 characters)<input type="password" name="pw" minlength="8" autocomplete="new-password" required></label>' +
+        '<label>Confirm new password<input type="password" name="pw2" minlength="8" autocomplete="new-password" required></label>' +
+        '<button class="btn" type="submit">Update password</button><p class="note" role="status" id="pwmsg"></p></form>');
+      document.getElementById("pwf").onsubmit = function (e) {
+        e.preventDefault();
+        var pm = document.getElementById("pwmsg");
+        if (e.target.pw.value !== e.target.pw2.value) { pm.textContent = "The two passwords don’t match."; return; }
+        pm.textContent = "Updating…";
+        sb.auth.updateUser({ password: e.target.pw.value }).then(function (r) {
+          pm.textContent = r.error ? r.error.message : "Password updated.";
+          if (!r.error) e.target.reset();
+        });
+      };
 
       var f = document.getElementById("prof");
       f.name.value = pName;
@@ -1235,43 +1252,48 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       return;
     }
 
-    // Step 2A: 6-digit Email Verification Code after Sign Up
+    var AUTH_ERR = function (m) {
+      if (/rate limit|exceeded|too many/i.test(m)) return "Too many emails were sent just now. Wait a few minutes and try again.";
+      if (/invalid login/i.test(m)) return "Wrong email or password. If you joined before passwords existed, tap “Forgot password” to set one.";
+      return m;
+    };
+
+    // Step 2A: one-time 6-digit code that confirms a NEW account's email
     if (mode === "verify") {
       app.innerHTML = '<article class="article-card" style="max-width:32rem;margin:2rem auto">' +
-        '<h1>Verify Your Email</h1>' +
-        '<p class="note">We sent a 6-digit verification code to <strong>' + esc(pendingEmail) + '</strong>. Enter it below to activate your account.</p>' +
+        '<h1>Confirm Your Email</h1>' +
+        '<p class="note">We sent a 6-digit code to <strong>' + esc(pendingEmail) + '</strong>. Enter it once to activate your account. After that you log in with your email and password.</p>' +
         '<form class="form" id="vform" style="margin-top:1.25rem">' +
-          '<label>6-Digit Verification Code<input type="text" name="token" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" autocomplete="one-time-code" placeholder="123456" required></label>' +
-          '<button class="btn" type="submit">Verify &amp; Log In</button>' +
+          '<label>6-Digit Code<input type="text" name="token" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" autocomplete="one-time-code" placeholder="123456" required></label>' +
+          '<button class="btn" type="submit">Confirm &amp; Log In</button>' +
           '<p class="note" role="status" id="msg"></p>' +
         '</form>' +
         '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="resend" type="button">Resend code</button> · <button class="linkbtn" id="back-auth" type="button">Back</button></p>' +
       '</article>';
-
       var vmsg = function (t) { document.getElementById("msg").textContent = t; };
-      document.getElementById("back-auth").onclick = function () { mode = "signup"; login(); };
+      document.getElementById("back-auth").onclick = function () { mode = "login"; login(); };
       document.getElementById("resend").onclick = function () {
         vmsg("Sending a new code…");
-        sb.auth.signInWithOtp({ email: pendingEmail, options: { shouldCreateUser: true } }).then(function (r) {
-          vmsg(r.error ? r.error.message : "A fresh 6-digit code has been sent to your email.");
+        sb.auth.resend({ type: "signup", email: pendingEmail }).then(function (r) {
+          vmsg(r.error ? AUTH_ERR(r.error.message) : "A new code was sent. Check spam too.");
         });
       };
       document.getElementById("vform").onsubmit = function (e) {
         e.preventDefault();
-        vmsg("Verifying code…");
-        sb.auth.verifyOtp({ email: pendingEmail, token: e.target.token.value.trim(), type: "email" }).then(function (r) {
-          if (r.error) return vmsg(r.error.message);
+        vmsg("Checking code…");
+        sb.auth.verifyOtp({ email: pendingEmail, token: e.target.token.value.trim(), type: "signup" }).then(function (r) {
+          if (r.error) return vmsg(AUTH_ERR(r.error.message));
           mode = "login";
         });
       };
       return;
     }
 
-    // Step 2B: Forgot Password -> Send 6-Digit Email Code
+    // Step 2B: Forgot password -> 6-digit recovery code
     if (mode === "forgot") {
       app.innerHTML = '<article class="article-card" style="max-width:32rem;margin:2rem auto">' +
         '<h1>Reset Password</h1>' +
-        '<p class="note">Enter your account email and we will send a 6-digit recovery code to your inbox.</p>' +
+        '<p class="note">Enter your account email and we will send a 6-digit recovery code.</p>' +
         '<form class="form" id="fform" style="margin-top:1.25rem">' +
           '<label>Email Address<input type="email" name="email" autocomplete="email" required></label>' +
           '<button class="btn" type="submit">Send Recovery Code</button>' +
@@ -1279,7 +1301,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
         '</form>' +
         '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="to-login" type="button">← Back to Log in</button></p>' +
       '</article>';
-
       var fmsg = function (t) { document.getElementById("msg").textContent = t; };
       document.getElementById("to-login").onclick = function () { mode = "login"; login(); };
       document.getElementById("fform").onsubmit = function (e) {
@@ -1287,16 +1308,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
         var email = e.target.email.value.trim();
         fmsg("Sending recovery code…");
         sb.auth.resetPasswordForEmail(email).then(function (r) {
-          if (r.error) return fmsg(r.error.message);
-          pendingEmail = email;
-          mode = "reset";
-          login();
+          if (r.error) return fmsg(AUTH_ERR(r.error.message));
+          pendingEmail = email; mode = "reset"; login();
         });
       };
       return;
     }
 
-    // Step 2C: Enter Recovery Code + New Password
+    // Step 2C: recovery code + new password
     if (mode === "reset") {
       app.innerHTML = '<article class="article-card" style="max-width:32rem;margin:2rem auto">' +
         '<h1>Enter Recovery Code</h1>' +
@@ -1307,80 +1326,88 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
           '<button class="btn" type="submit">Update Password &amp; Log In</button>' +
           '<p class="note" role="status" id="msg"></p>' +
         '</form>' +
-        '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="resend-rec" type="button">Resend recovery code</button> · <button class="linkbtn" id="cancel-rec" type="button">Cancel</button></p>' +
+        '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="resend-rec" type="button">Resend code</button> · <button class="linkbtn" id="cancel-rec" type="button">Cancel</button></p>' +
       '</article>';
-
       var rmsg = function (t) { document.getElementById("msg").textContent = t; };
       document.getElementById("cancel-rec").onclick = function () { mode = "login"; login(); };
       document.getElementById("resend-rec").onclick = function () {
         rmsg("Resending code…");
         sb.auth.resetPasswordForEmail(pendingEmail).then(function (r) {
-          rmsg(r.error ? r.error.message : "New recovery code sent.");
+          rmsg(r.error ? AUTH_ERR(r.error.message) : "New recovery code sent.");
         });
       };
       document.getElementById("rform").onsubmit = function (e) {
         e.preventDefault();
-        var token = e.target.token.value.trim();
-        var newPw = e.target.password.value;
-        rmsg("Verifying code & updating password…");
+        var token = e.target.token.value.trim(), newPw = e.target.password.value;
+        rmsg("Checking code…");
+        recovering = true;
         sb.auth.verifyOtp({ email: pendingEmail, token: token, type: "recovery" }).then(function (r) {
           if (r.error) throw new Error(r.error.message);
           return sb.auth.updateUser({ password: newPw });
         }).then(function (u) {
           if (u.error) throw new Error(u.error.message);
-          mode = "login";
+          recovering = false; mode = "login"; login();
         }).catch(function (err) {
-          rmsg(err.message || "Could not reset password.");
+          recovering = false;
+          rmsg(AUTH_ERR(err.message || "Could not reset password."));
         });
       };
       return;
     }
 
-    // Step 1: Log In or Create Researcher Account via 6-Digit Email Code (No Custom SMTP required)
+    // Step 1: Log in with email + password, or create an account
     var su = mode === "signup";
     app.innerHTML = '<article class="article-card" style="max-width:34rem;margin:2rem auto">' +
       '<h1>' + (su ? "Join Paigham Research Network" : "Log in to Paigham") + '</h1>' +
-      '<p class="note" style="margin-bottom:1.1rem">' + (su ? "Create your researcher profile. We will send a 6-digit login code to your email." : "Enter your email to receive a 6-digit login code — no password needed.") + '</p>' +
+      '<p class="note" style="margin-bottom:1.1rem">' + (su ? "Create your researcher account. We email you a 6-digit code once to confirm your address." : "Log in with your email and password. You stay logged in on this device.") + '</p>' +
       '<form class="form" id="auth">' +
         (su ? '<label>Full Name <span class="req">*</span><input name="name" maxlength="80" placeholder="e.g. Muhammad Sulaiman Saeed" required></label>' +
-              '<label>What do you study? (Compulsory) <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Political Science" required></label>' +
-              '<label>Future Interests (Compulsory) <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, geopolitics" required></label>' : '') +
-        '<label>Email (Gmail / Academic) <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
-        '<button class="btn" type="submit">Send 6-Digit Code</button>' +
+              '<label>What do you study? <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Political Science" required></label>' +
+              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, geopolitics" required></label>' : '') +
+        '<label>Email <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
+        '<label>Password' + (su ? ' (at least 8 characters)' : '') + ' <span class="req">*</span><input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
+        (su ? '<label>Confirm Password <span class="req">*</span><input type="password" name="password2" minlength="8" autocomplete="new-password" required></label>' : '') +
+        '<button class="btn" type="submit">' + (su ? "Create Account" : "Log in") + '</button>' +
         '<p class="note" role="status" id="msg"></p>' +
       '</form>' +
       '<div style="margin-top:1.25rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">' +
-        '<span class="note">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in with code</button>' : 'New to Paigham? <button class="linkbtn" id="flip" type="button">Create researcher account</button>') + '</span>' +
+        '<span class="note">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New to Paigham? <button class="linkbtn" id="flip" type="button">Create account</button>') + '</span>' +
+        (su ? '' : '<button class="linkbtn" id="forgot" type="button">Forgot password?</button>') +
       '</div>' +
     '</article>';
 
     var msg = function (t) { document.getElementById("msg").textContent = t; };
     document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; login(); };
+    if (!su) document.getElementById("forgot").onclick = function () { mode = "forgot"; login(); };
 
     document.getElementById("auth").onsubmit = function (e) {
       e.preventDefault();
-      var f = e.target;
-      var email = f.email.value.trim();
-      msg("Sending 6-digit code…");
-
-      var otpOptions = { shouldCreateUser: true };
+      var f = e.target, email = f.email.value.trim(), pw = f.password.value;
       if (su) {
-        otpOptions.data = {
-          name: f.name.value.trim(),
-          study_field: f.study.value.trim(),
-          future_interests: f.future.value.trim()
-        };
+        if (pw !== f.password2.value) return msg("The two passwords don’t match.");
+        msg("Creating account…");
+        sb.auth.signUp({ email: email, password: pw, options: {
+          data: { name: f.name.value.trim(), study_field: f.study.value.trim(), future_interests: f.future.value.trim() },
+          emailRedirectTo: location.origin
+        } }).then(function (r) {
+          if (r.error) return msg(AUTH_ERR(r.error.message));
+          if (r.data.user && r.data.user.identities && !r.data.user.identities.length) return msg("This email already has an account. Log in, or tap “Forgot password”.");
+          if (r.data.session) return; // confirmation is off: already logged in
+          pendingEmail = email; mode = "verify"; login();
+        });
+      } else {
+        msg("Logging in…");
+        sb.auth.signInWithPassword({ email: email, password: pw }).then(function (r) {
+          if (r.error) {
+            if (/not confirmed/i.test(r.error.message)) {
+              pendingEmail = email;
+              sb.auth.resend({ type: "signup", email: email }).then(function () { mode = "verify"; login(); });
+              return;
+            }
+            return msg(AUTH_ERR(r.error.message));
+          }
+        });
       }
-
-      sb.auth.signInWithOtp({
-        email: email,
-        options: otpOptions
-      }).then(function (r) {
-        if (r.error) return msg(r.error.message);
-        pendingEmail = email;
-        mode = "verify";
-        login();
-      });
     };
   }
 
@@ -1548,6 +1575,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 
   function refresh() {
     document.getElementById("nav-login").textContent = user ? "My Profile" : "Log in / Join";
+    if (recovering) return;
     if (/^#(login|write)/.test(location.hash)) route();
   }
 
