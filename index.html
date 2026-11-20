@@ -413,17 +413,21 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     renderComments(p.id);
   }
 
-  function about() {
-    document.title = "About us · Paigham"; setBg("home");
-    app.innerHTML = '<article><h1>About us</h1><div class="prose">' +
-      '<p>Paigham is a space for writing and open discussion across science, criminology, model organisms, geopolitics, and philosophy. I share what I’m learning, and anyone can log in to publish or comment.</p>' +
+function about() {
+    document.title = "About · Paigham"; setBg("home");
+    app.innerHTML = '<article><h1>About Paigham</h1><div class="prose">' +
+      '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — a space for clear writing and open discussion across science, criminology, model organisms, geopolitics, and philosophy. Every piece here starts with a question worth examining closely, whether from a laboratory bench, a courtroom record, or a shifting map.</p>' +
+      '<h2>About the Founder</h2>' +
+      '<p>I’m <strong>M. Sulaiman Saeed</strong>, a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my research work centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on crime, world affairs, and philosophy.</p>' +
+      '<p>Outside the lab, I build indie software and self-hosted infrastructure — including my personal site <a href="https://genescripted.com" target="_blank" rel="noopener">Genescripted</a> and indie studio <strong>Hashtrone Games</strong>.</p>' +
+      '<h2>Contribute &amp; Discuss</h2>' +
+      '<p>Paigham isn’t a monologue. Create an account to leave comments on any journal entry, share reflections in the Philosophy tab, or <a href="#write">submit your own article</a> for publication.</p>' +
       '<h2>Contact</h2><ul>' +
       '<li>Admin Email: <a href="mailto:admin@paigham.live">admin@paigham.live</a></li>' +
       '<li>Feedback: <a href="mailto:feedback@paigham.live">feedback@paigham.live</a></li>' +
       '<li>Official Instagram: <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">@paigham.live</a></li>' +
       '<li>Personal Instagram: <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">@thesulaimansaeed</a></li>' +
-      '</ul>' +
-      '<p>Want to write or share a philosophical thought? <a href="#write">Upload your blog</a>. Posts are reviewed before they go live.</p></div><a class="back" href="#">Back to all posts</a></article>';
+      '</ul></div><a class="back" href="#">Back to all posts</a></article>';
     setNav("about", "");
   }
 
