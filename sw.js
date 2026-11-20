@@ -1,6 +1,6 @@
 // Lets Paigham install on phones and open even with a weak connection.
-var CACHE = "paigham-v5";
-var SHELL = ["./", "index.html", "config.js", "posts.js", "logo.png", "icon-192.png", "icon-512.png"];
+var CACHE = "paigham-v6";
+var SHELL = ["./", "index.html", "style.css", "app.js", "config.js", "posts.js", "vendor/marked.min.js", "vendor/purify.min.js", "vendor/supabase.js", "logo.png", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }));
   self.skipWaiting();
