@@ -4,7 +4,7 @@
   2. Project Settings -> API: copy the Project URL and the "anon public" key
   3. Paste them below. The anon key is safe to be public.
   4. Authentication -> URL Configuration: set Site URL to https://paigham.live
-  5. Run supabase-setup.sql in SQL Editor to create tables + storage bucket ("attachments").
+  5. Run supabase-setup.sql in SQL Editor to create tables + storage buckets.
 */
 window.PAIGHAM_CONFIG = {
   supabaseUrl: "https://xaystacrlzqdrhfptosv.supabase.co",

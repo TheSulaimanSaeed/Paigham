@@ -1,12 +1,12 @@
 {
   "name": "Paigham",
   "short_name": "Paigham",
-  "description": "Science, criminology, model organisms, geopolitics and philosophy writing by M. Sulaiman Saeed.",
+  "description": "Research network & journal across Science (Physics, Chemistry, Biology), Model Organisms, Geopolitics, and Philosophy by M. Sulaiman Saeed.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f2ec",
-  "theme_color": "#f4f2ec",
+  "background_color": "#f4f6f9",
+  "theme_color": "#0d3b66",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
