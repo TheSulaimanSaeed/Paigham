@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Paigham</title>
-<meta name="description" content="Paigham: science, criminology, zebrafish and geopolitics writing.">
+<meta name="description" content="Paigham: science, criminology, model organisms, geopolitics and philosophy writing.">
 <link rel="icon" href="logo.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -47,10 +47,15 @@ nav a:hover,nav a[aria-current="page"]{color:var(--ink);text-decoration:underlin
 .tabs a{text-decoration:none;color:var(--soft)}
 .tabs a:hover,.tabs a[aria-current="page"]{color:var(--accent);font-weight:600}
 
+.subtabs{display:flex;gap:.65rem;flex-wrap:wrap;margin:1.25rem 0 .5rem}
+.subtab{font:inherit;font-size:.95rem;padding:.35rem .85rem;border:1px solid var(--line);border-radius:999px;background:rgba(var(--paper-rgb),.65);color:var(--soft);cursor:pointer}
+.subtab:hover{color:var(--ink);border-color:var(--soft)}
+.subtab[aria-pressed="true"]{background:var(--accent);color:var(--paper);border-color:var(--accent);font-weight:600}
+
 .hero{padding:3rem 0 1.5rem}
 .hero h1{font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.1;margin:0 0 .75rem;font-weight:600;letter-spacing:-.01em}
-.hero p{margin:0;font-size:1.2rem;color:var(--soft);max-width:32rem}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin:2rem 0}
+.hero p{margin:0;font-size:1.2rem;color:var(--soft);max-width:34rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem;margin:2rem 0}
 .card{display:flex;flex-direction:column;justify-content:flex-end;min-height:11rem;padding:1.1rem 1.25rem;text-decoration:none;color:#f6f4ee;border-radius:.6rem;background:linear-gradient(transparent 20%,rgba(10,12,20,.82)),var(--c1) center/cover;background-color:var(--c2)}
 .card h2{margin:0;font-size:1.4rem}
 .card p{margin:.2rem 0 0;font-size:.98rem;opacity:.9;line-height:1.45}
@@ -78,10 +83,20 @@ article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 1.5
 .empty{color:var(--soft);padding:2rem 0}
 .by a{color:var(--accent)}
 
+/* Comments */
+.comments{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--line)}
+.comments h2{font-size:1.35rem;margin:0 0 1rem}
+.clist{display:grid;gap:1rem;margin-bottom:1.75rem}
+.citem{padding:1rem 1.15rem;border:1px solid var(--line);border-radius:.5rem;background:rgba(var(--paper-rgb),.55)}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;font-size:.92rem;color:var(--soft);margin-bottom:.35rem;flex-wrap:wrap}
+.chead strong{color:var(--ink)}
+.cbody{margin:0;white-space:pre-wrap;line-height:1.55}
+
 .form{display:grid;gap:1rem;max-width:34rem}
 .form label{display:grid;gap:.35rem;font-size:1rem;color:var(--soft)}
 .form input,.form select,.form textarea{font:inherit;color:var(--ink);padding:.65rem .8rem;border:1px solid var(--line);background:rgba(var(--paper-rgb),.7);border-radius:.4rem;width:100%}
 .form textarea{min-height:16rem;resize:vertical;line-height:1.5}
+.form textarea.short{min-height:6rem}
 .btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer;justify-self:start}
 .linkbtn{font:inherit;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
 .note{color:var(--soft);font-size:1rem;margin:0}
@@ -116,7 +131,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     <span class="flinks">
       <a href="mailto:admin@paigham.live">Email</a>
       <a href="mailto:feedback@paigham.live">Feedback</a>
-      <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">Official Instagram</a>
+      <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a>
     </span>
   </div>
 </footer>
@@ -132,17 +148,42 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   var cfg = window.PAIGHAM_CONFIG || {};
   var sb = (cfg.supabaseUrl && cfg.supabaseKey && window.supabase)
     ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { flowType: "pkce" } }) : null;
-  var user = null, mode = "login", community = [];
-  // Photos go in /img/ (science.jpg, criminology.jpg, zebrafish.jpg, geopolitics.jpg, home.jpg). Gradients show until you add them.
+  var user = null, mode = "login", community = [], sciSub = "all";
+
   var S = {
-    science: { t: "Science", d: "Discoveries, explainers and notes from the lab and the field.", c: "#2f5d62" },
-    criminology: { t: "Criminology", d: "Why crime happens, how it's studied and how justice works.", c: "#4a3b52" },
-    zebrafish: { t: "Zebrafish", d: "Zebrafish research, seizure models and what tiny fish teach us.", c: "#1f4e79" },
-    geopolitics: { t: "Geopolitics", d: "Power, borders, resources and how the world is shifting.", c: "#5a4a2e" }
+    science: {
+      t: "Science",
+      d: "Discoveries, explainers and notes across Physics, Chemistry and Biology.",
+      c: "#2f5d62",
+      subs: { all: "All", physics: "Physics", chemistry: "Chemistry", biology: "Biology" }
+    },
+    criminology: {
+      t: "Criminology",
+      d: "Why crime happens, how it's studied and how justice works.",
+      c: "#4a3b52"
+    },
+    models: {
+      t: "Model Organisms",
+      d: "Zebrafish, mice, Drosophila and how animal test models advance biology.",
+      c: "#1f4e79"
+    },
+    geopolitics: {
+      t: "Geopolitics",
+      d: "Power, borders, resources and how the world is shifting.",
+      c: "#5a4a2e"
+    },
+    philosophy: {
+      t: "Philosophy",
+      d: "Share your thoughts, reflections and open questions — and discuss them together.",
+      c: "#3d4638"
+    }
   };
+
   var keys = Object.keys(S);
   document.getElementById("year").textContent = new Date().getFullYear();
-  document.getElementById("tabs").innerHTML = keys.map(function (k) { return '<a href="#' + k + '" data-k="' + k + '">' + S[k].t + '</a>'; }).join("");
+  document.getElementById("tabs").innerHTML = keys.map(function (k) {
+    return '<a href="#' + k + '" data-k="' + k + '">' + S[k].t + '</a>';
+  }).join("");
 
   DOMPurify.addHook("afterSanitizeAttributes", function (n) {
     if (n.tagName === "A") { n.setAttribute("rel", "noopener nofollow ugc"); n.setAttribute("target", "_blank"); }
@@ -162,12 +203,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     });
   }
   function all() {
-    var mine = (window.POSTS || []).map(function (p) { return { id: p.slug, title: p.title, date: p.date, section: p.section, excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" }; });
-    var com = community.map(function (p) { return { id: "c-" + p.id, title: p.title, date: p.created_at, section: p.section, excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) }; });
+    var mine = (window.POSTS || []).map(function (p) {
+      return { id: p.slug, title: p.title, date: p.date, section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" };
+    });
+    var com = community.map(function (p) {
+      return { id: "c-" + p.id, title: p.title, date: p.created_at, section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) };
+    });
     return mine.concat(com).sort(function (a, b) { return b.date.localeCompare(a.date); });
   }
-  function rows(list) {
-    if (!list.length) return '<p class="empty">Nothing here yet. Be the first: <a href="#write">upload your blog</a>.</p>';
+  function rows(list, emptyMsg) {
+    if (!list.length) return '<p class="empty">' + (emptyMsg || 'Nothing here yet. Be the first: <a href="#write">upload your blog</a>.') + '</p>';
     return '<div>' + list.map(function (p) {
       return '<a class="row" href="#' + encodeURIComponent(p.id) + '"><time datetime="' + p.date.slice(0, 10) + '">' + fmt(p.date) + '</time><div><h3></h3><p></p><small></small></div></a>';
     }).join("") + '</div>';
@@ -175,55 +220,183 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   function fillRows(list) {
     var r = app.querySelectorAll(".row");
     list.forEach(function (p, i) {
+      var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " · " + S.science.subs[p.sub] : "";
       r[i].querySelector("h3").textContent = p.title;
       r[i].querySelector("p").textContent = p.excerpt || "";
-      r[i].querySelector("small").textContent = "By " + p.author + (S[p.section] ? " · " + S[p.section].t : "");
+      r[i].querySelector("small").textContent = "By " + p.author + (S[p.section] ? " · " + S[p.section].t : "") + subLabel + " · Discussion";
     });
   }
 
   function home() {
     document.title = "Paigham"; setBg("home");
     var list = all().slice(0, 8);
-    app.innerHTML = '<section class="hero"><h1>Science, crime, zebrafish and world affairs.</h1><p>Paigham means message. Read mine, or log in and post yours.</p></section>' +
+    app.innerHTML = '<section class="hero"><h1>Science, crime, model organisms, geopolitics &amp; philosophy.</h1><p>Paigham means message. Read mine, share your thoughts, or log in and publish yours.</p></section>' +
       '<div class="cards">' + keys.map(function (k) {
         return '<a class="card" href="#' + k + '" style="--c1:url(img/' + k + '.jpg);--c2:' + S[k].c + '"><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p></a>';
       }).join("") + '</div><h2 class="h2s">Latest</h2>' + rows(list);
     fillRows(list); setNav("", "");
   }
+
   function section(k) {
     document.title = S[k].t + " · Paigham"; setBg(k);
     var list = all().filter(function (p) { return p.section === k; });
-    app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p></section>' + rows(list);
+    var subBar = "";
+
+    if (k === "science") {
+      var subs = S.science.subs;
+      subBar = '<div class="subtabs" role="group" aria-label="Science branches">' +
+        Object.keys(subs).map(function (sk) {
+          return '<button type="button" class="subtab" data-sub="' + sk + '" aria-pressed="' + (sciSub === sk) + '">' + subs[sk] + '</button>';
+        }).join("") + '</div>';
+      if (sciSub !== "all") {
+        list = list.filter(function (p) { return p.sub === sciSub; });
+      }
+    }
+
+    var cta = k === "philosophy"
+      ? '<p style="margin-top:1rem"><a class="btn" style="text-decoration:none;display:inline-block" href="#write?section=philosophy">Share a thought</a></p>'
+      : '';
+
+    app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p>' + cta + '</section>' +
+      subBar + rows(list, k === "philosophy" ? 'No thoughts posted yet. <a href="#write?section=philosophy">Start the conversation</a>.' : "");
     fillRows(list); setNav("", k);
+
+    if (k === "science") {
+      app.querySelectorAll(".subtab").forEach(function (btn) {
+        btn.onclick = function () {
+          sciSub = btn.dataset.sub;
+          section("science");
+        };
+      });
+    }
   }
+
+  function renderComments(postId) {
+    var box = document.getElementById("comments-box");
+    if (!box) return;
+    if (!sb) {
+      box.innerHTML = '<section class="comments"><h2>Comments</h2><p class="note">Comments require Supabase to be connected.</p></section>';
+      return;
+    }
+
+    var formHtml = user
+      ? '<form class="form" id="cform"><label>Add a comment<textarea class="short" name="body" minlength="1" maxlength="2000" placeholder="Share your thoughts on this piece..." required></textarea></label>' +
+        '<button class="btn" type="submit">Post comment</button><p class="note" role="status" id="cmsg"></p></form>'
+      : '<p class="note"><a href="#login">Log in</a> to join the discussion and leave a comment.</p>';
+
+    box.innerHTML = '<section class="comments"><h2>Comments (<span id="ccount">0</span>)</h2><div class="clist" id="clist"><p class="note">Loading comments…</p></div>' + formHtml + '</section>';
+
+    function loadList() {
+      sb.from("comments").select("id,user_id,author_name,instagram,body,created_at").eq("post_id", postId).order("created_at", { ascending: true })
+        .then(function (r) {
+          var items = r.data || [];
+          document.getElementById("ccount").textContent = items.length;
+          var clist = document.getElementById("clist");
+          if (!items.length) {
+            clist.innerHTML = '<p class="note">No comments yet. Be the first to respond.</p>';
+            return;
+          }
+          clist.innerHTML = "";
+          items.forEach(function (c) {
+            var div = document.createElement("div");
+            div.className = "citem";
+            var head = document.createElement("div");
+            head.className = "chead";
+
+            var left = document.createElement("span");
+            var strong = document.createElement("strong");
+            strong.textContent = c.author_name;
+            left.appendChild(strong);
+            if (ig(c.instagram)) {
+              var a = document.createElement("a");
+              a.href = "https://instagram.com/" + ig(c.instagram);
+              a.target = "_blank";
+              a.rel = "noopener";
+              a.textContent = " (@" + ig(c.instagram) + ")";
+              left.appendChild(a);
+            }
+            left.append(" · " + fmt(c.created_at));
+            head.appendChild(left);
+
+            if (user && user.id === c.user_id) {
+              var del = document.createElement("button");
+              del.type = "button";
+              del.className = "linkbtn";
+              del.textContent = "Delete";
+              del.onclick = function () {
+                sb.from("comments").delete().eq("id", c.id).then(loadList);
+              };
+              head.appendChild(del);
+            }
+
+            var p = document.createElement("p");
+            p.className = "cbody";
+            p.textContent = c.body;
+
+            div.appendChild(head);
+            div.appendChild(p);
+            clist.appendChild(div);
+          });
+        });
+    }
+
+    loadList();
+
+    var cf = document.getElementById("cform");
+    if (cf) {
+      cf.onsubmit = function (e) {
+        e.preventDefault();
+        var m = user.user_metadata || {};
+        var cmsg = document.getElementById("cmsg");
+        cmsg.textContent = "Posting…";
+        sb.from("comments").insert({
+          post_id: postId,
+          author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
+          instagram: ig(m.instagram) || null,
+          body: cf.body.value.trim()
+        }).then(function (r) {
+          if (r.error) { cmsg.textContent = "Couldn't post comment: " + r.error.message; return; }
+          cf.reset();
+          cmsg.textContent = "";
+          loadList();
+        });
+      };
+    }
+  }
+
   function post(id) {
     var p = all().filter(function (x) { return x.id === id; })[0];
     if (!p) { app.innerHTML = '<p class="empty">That post doesn’t exist. <a href="#">Back to all posts</a></p>'; setNav("", ""); return; }
     document.title = p.title + " · Paigham"; setBg(p.section);
-    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div><p class="by note"></p><a class="back" href="#">Back to all posts</a></article>';
-    app.querySelector(".meta").textContent = fmt(p.date) + " · " + (S[p.section] ? S[p.section].t : "") + " · " + mins(p.body) + " min read";
+    var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " (" + S.science.subs[p.sub] + ")" : "";
+    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div><p class="by note"></p><div id="comments-box"></div><a class="back" href="#' + p.section + '">Back to ' + (S[p.section] ? S[p.section].t : "all posts") + '</a></article>';
+    app.querySelector(".meta").textContent = fmt(p.date) + " · " + (S[p.section] ? S[p.section].t + subLabel : "") + " · " + mins(p.body) + " min read";
     app.querySelector("h1").textContent = p.title;
     app.querySelector(".prose").innerHTML = md(p.body);
     var by = app.querySelector(".by"); by.textContent = "Written by " + p.author;
     if (p.ig) { var a = document.createElement("a"); a.href = "https://instagram.com/" + p.ig; a.target = "_blank"; a.rel = "noopener"; a.textContent = "@" + p.ig; by.append(" · Instagram: ", a); }
     setNav("", p.section);
+    renderComments(p.id);
   }
+
   function about() {
     document.title = "About us · Paigham"; setBg("home");
     app.innerHTML = '<article><h1>About us</h1><div class="prose">' +
-      '<p>Paigham is a space for writing on science, criminology, zebrafish research and geopolitics. I share what I’m learning, and anyone can log in and share what they know.</p>' +
+      '<p>Paigham is a space for writing and open discussion across science, criminology, model organisms, geopolitics, and philosophy. I share what I’m learning, and anyone can log in to publish or comment.</p>' +
       '<h2>Contact</h2><ul>' +
       '<li>Admin Email: <a href="mailto:admin@paigham.live">admin@paigham.live</a></li>' +
       '<li>Feedback: <a href="mailto:feedback@paigham.live">feedback@paigham.live</a></li>' +
       '<li>Official Instagram: <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">@paigham.live</a></li>' +
       '<li>Personal Instagram: <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">@thesulaimansaeed</a></li>' +
       '</ul>' +
-      '<p>Want to write here? <a href="#write">Upload your blog</a>. Posts are reviewed before they go live.</p></div><a class="back" href="#">Back to all posts</a></article>';
+      '<p>Want to write or share a philosophical thought? <a href="#write">Upload your blog</a>. Posts are reviewed before they go live.</p></div><a class="back" href="#">Back to all posts</a></article>';
     setNav("about", "");
   }
+
   function needSb(title) {
     app.innerHTML = '<article><h1>' + title + '</h1><div class="prose"><p>Accounts aren’t connected yet. Add your Supabase keys in config.js to turn them on.</p></div></article>';
   }
+
   function login() {
     document.title = "Log in · Paigham"; setBg("home"); setNav("login", "");
     if (!sb) return needSb("Log in");
@@ -231,7 +404,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       var m = user.user_metadata || {};
       app.innerHTML = '<article><h1>Your account</h1><p class="note">Logged in as <strong class="who"></strong>.</p>' +
         '<form class="form" id="prof" style="margin-top:1.5rem"><label>Display name<input name="name" maxlength="60" required></label>' +
-        '<label>Instagram username (shown on your posts)<input name="ig" maxlength="30" placeholder="yourname" pattern="[A-Za-z0-9._]{1,30}"></label>' +
+        '<label>Instagram username (shown on your posts &amp; comments)<input name="ig" maxlength="30" placeholder="yourname" pattern="[A-Za-z0-9._]{1,30}"></label>' +
         '<button class="btn" type="submit">Save profile</button><p class="note" role="status" id="msg"></p></form>' +
         '<p style="margin-top:1.5rem"><button class="btn" id="out" type="button">Log out</button></p></article>';
       app.querySelector(".who").textContent = user.email;
@@ -267,42 +440,77 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       });
     };
   }
-  function write() {
+
+  function write(defaultSec) {
     document.title = "Upload your blog · Paigham"; setBg("home"); setNav("write", "");
     if (!sb) return needSb("Upload your blog");
-    if (!user) { app.innerHTML = '<article><h1>Upload your blog</h1><div class="prose"><p>Log in first, then you can post here. <a href="#login">Log in or create an account</a>.</p></div></article>'; return; }
-    app.innerHTML = '<article><h1>Upload your blog</h1><p class="note">Write in Markdown. Posts are reviewed before they appear.</p>' +
-      '<form class="form" id="wf" style="margin-top:1.5rem"><label>Section<select name="section">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
+    if (!user) { app.innerHTML = '<article><h1>Upload your blog</h1><div class="prose"><p>Log in first, then you can post or share philosophical thoughts here. <a href="#login">Log in or create an account</a>.</p></div></article>'; return; }
+
+    app.innerHTML = '<article><h1>Upload your blog or thought</h1><p class="note">Write in Markdown. Posts are reviewed before they appear.</p>' +
+      '<form class="form" id="wf" style="margin-top:1.5rem">' +
+      '<label>Section<select name="section" id="sec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
+      '<label id="sub-wrap">Science branch<select name="sub_section">' +
+      '<option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option>' +
+      '</select></label>' +
       '<label>Title<input name="title" minlength="3" maxlength="120" required></label>' +
       '<label>Short summary<input name="excerpt" maxlength="200"></label>' +
       '<label>Your post<textarea name="body" minlength="20" maxlength="20000" required></textarea></label>' +
       '<button class="btn" type="submit">Submit for review</button><p class="note" role="status" id="msg"></p></form></article>';
+
+    var secSel = document.getElementById("sec-sel");
+    var subWrap = document.getElementById("sub-wrap");
+    if (defaultSec && S[defaultSec]) secSel.value = defaultSec;
+    function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
+    secSel.onchange = toggleSub;
+    toggleSub();
+
     document.getElementById("wf").onsubmit = function (e) {
       e.preventDefault();
       var f = e.target, m = user.user_metadata || {}, msg = document.getElementById("msg");
       msg.textContent = "Submitting…";
-      sb.from("posts").insert({ section: f.section.value, title: f.title.value.trim(), excerpt: f.excerpt.value.trim(), body: f.body.value,
-        author_name: (m.name || user.email.split("@")[0]).slice(0, 60), instagram: ig(m.instagram) || null }).then(function (r) {
+      var payload = {
+        section: f.section.value,
+        sub_section: f.section.value === "science" ? f.sub_section.value : null,
+        title: f.title.value.trim(),
+        excerpt: f.excerpt.value.trim(),
+        body: f.body.value,
+        author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
+        instagram: ig(m.instagram) || null
+      };
+      sb.from("posts").insert(payload).then(function (r) {
         if (r.error) { msg.textContent = "Couldn’t submit: " + r.error.message; return; }
-        f.reset(); msg.textContent = "Submitted. It will appear once approved.";
+        f.reset();
+        toggleSub();
+        msg.textContent = "Submitted. It will appear once approved.";
       });
     };
   }
+
   function route() {
-    var h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
-    if (!h) home(); else if (S[h]) section(h); else if (h === "about") about(); else if (h === "login") login(); else if (h === "write") write(); else post(h);
+    var raw = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+    var parts = raw.split("?");
+    var h = parts[0];
+    var params = new URLSearchParams(parts[1] || "");
+    if (!h) home();
+    else if (S[h]) section(h);
+    else if (h === "about") about();
+    else if (h === "login") login();
+    else if (h === "write") write(params.get("section"));
+    else post(h);
     window.scrollTo(0, 0);
   }
+
   function loadCommunity() {
     if (!sb) return Promise.resolve();
-    return sb.from("posts").select("id,title,section,excerpt,body,created_at,author_name,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
+    return sb.from("posts").select("id,title,section,sub_section,excerpt,body,created_at,author_name,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
       .then(function (r) { community = r.data || []; });
   }
+
   function refresh() {
     document.getElementById("nav-login").textContent = user ? "Account" : "Log in";
-    if (/^#(login|write)$/.test(location.hash)) route();
+    if (/^#(login|write)/.test(location.hash)) route();
   }
-  // 3D logo tilts with the pointer
+
   var rig = document.getElementById("rig");
   if (!window.matchMedia("(prefers-reduced-motion:reduce)").matches) {
     window.addEventListener("pointermove", function (e) {
@@ -316,7 +524,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   if (sb) {
     sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; refresh(); });
     sb.auth.onAuthStateChange(function (_e, s) { user = s ? s.user : null; refresh(); });
-    loadCommunity().then(function () { if (!/^#(login|write|about)$/.test(location.hash)) route(); });
+    loadCommunity().then(function () { if (!/^#(login|write|about)/.test(location.hash)) route(); });
   }
 })();
 </script>
