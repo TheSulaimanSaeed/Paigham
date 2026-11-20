@@ -22,6 +22,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   var user = null;
   var profile = null;
   var profilesList = [];
+  var myPosts = [];
   var mode = "login"; // login | signup | verify | forgot | reset
   var pendingEmail = "";
   var recovering = false;
@@ -118,6 +119,62 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     });
   }
 
+  function storagePathFromUrl(url) {
+    if (!url) return "";
+    var marker = "/storage/v1/object/public/attachments/";
+    var idx = String(url).indexOf(marker);
+    if (idx === -1) return "";
+    try {
+      return decodeURIComponent(String(url).slice(idx + marker.length).split("?")[0]);
+    } catch (_e) {
+      return String(url).slice(idx + marker.length).split("?")[0];
+    }
+  }
+
+  function sharePost(p, statusEl) {
+    var shareUrl = location.origin + "/#" + encodeURIComponent(p.id);
+    var notify = function (txt) {
+      if (!statusEl) return;
+      statusEl.textContent = txt;
+      setTimeout(function () { if (statusEl) statusEl.textContent = ""; }, 3000);
+    };
+    if (navigator.share) {
+      navigator.share({
+        title: p.title + " · Paigham",
+        text: p.excerpt || p.title,
+        url: shareUrl
+      }).catch(function () {});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(function () {
+        notify("Link copied to clipboard!");
+      }).catch(function () {
+        window.prompt("Copy this link to share:", shareUrl);
+      });
+    } else {
+      window.prompt("Copy this link to share:", shareUrl);
+    }
+  }
+
+  function deletePostById(rawId, mediaUrl, onSuccess, onError) {
+    if (!sb || !user) return;
+    if (!window.confirm("Are you sure you want to permanently delete this post? This cannot be undone.")) return;
+    var oldPath = storagePathFromUrl(mediaUrl);
+    sb.from("posts").delete().eq("id", rawId).eq("user_id", user.id).then(function (r) {
+      if (r.error) throw new Error(r.error.message);
+      if (oldPath) {
+        sb.storage.from("attachments").remove([oldPath]).catch(function () {});
+      }
+      return Promise.all([loadCommunity(), loadMyPosts()]);
+    }).then(function () {
+      if (onSuccess) onSuccess();
+    }).catch(function (err) {
+      if (onError) onError(err.message || "Could not delete post.");
+      else alert(err.message || "Could not delete post.");
+    });
+  }
+
   function validateFile(file, imgOnly) {
     if (!file) return null;
     var list = imgOnly ? ALLOWED_IMG : ALLOWED_ALL;
@@ -186,10 +243,35 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     return "";
   }
 
+  function mapCommunityRow(p) {
+    return {
+      id: "c-" + p.id,
+      rawId: p.id,
+      userId: p.user_id || "",
+      approved: p.approved !== false,
+      title: p.title,
+      date: p.created_at || "2026-01-01",
+      section: p.section,
+      sub: p.sub_section || "",
+      post_type: p.post_type || "article",
+      excerpt: p.excerpt,
+      body: p.body,
+      media_url: p.media_url || "",
+      media_type: p.media_type || "",
+      author: p.author_name,
+      study: p.author_study || "",
+      avatar: p.author_avatar || "",
+      ig: ig(p.instagram)
+    };
+  }
+
   function all() {
     var mine = (Array.isArray(window.POSTS) ? window.POSTS : []).map(function (p) {
       return {
         id: p.slug,
+        rawId: null,
+        userId: null,
+        approved: true,
         title: p.title,
         date: p.date || "2026-01-01",
         section: p.section,
@@ -205,24 +287,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         ig: "thesulaimansaeed"
       };
     });
-    var com = (Array.isArray(community) ? community : []).map(function (p) {
-      return {
-        id: "c-" + p.id,
-        title: p.title,
-        date: p.created_at || "2026-01-01",
-        section: p.section,
-        sub: p.sub_section || "",
-        post_type: p.post_type || "article",
-        excerpt: p.excerpt,
-        body: p.body,
-        media_url: p.media_url || "",
-        media_type: p.media_type || "",
-        author: p.author_name,
-        study: p.author_study || "",
-        avatar: p.author_avatar || "",
-        ig: ig(p.instagram)
-      };
-    });
+    var com = (Array.isArray(community) ? community : []).map(mapCommunityRow);
     return mine.concat(com).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
   }
 
@@ -508,15 +573,28 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
   function post(id) {
     var p = all().filter(function (x) { return x.id === id; })[0];
+    if (!p && user && myPosts.length) {
+      var mineMatch = myPosts.filter(function (x) { return "c-" + x.id === id; })[0];
+      if (mineMatch) p = mapCommunityRow(mineMatch);
+    }
     if (!p) { app.innerHTML = '<div class="empty" style="margin-top:1.5rem">That publication doesn’t exist. <a href="#">Back to home feed</a></div>'; setNav("", ""); return; }
     document.title = p.title + " · Paigham"; setBg(p.section);
     var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " · " + S.science.subs[p.sub] : "";
     var mediaHtml = renderMedia(p.media_url, p.media_type, p.title);
     var igHtml = p.ig ? ' · <a href="https://instagram.com/' + p.ig + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:600">@' + p.ig + '</a>' : '';
+    var isOwner = Boolean(user && p.rawId && p.userId && user.id === p.userId);
+    var pendingNotice = !p.approved ? '<p class="note" style="background:#fef3c7;color:#92400e;padding:.6rem .85rem;border-radius:8px;margin-bottom:1rem"><strong>Pending approval:</strong> Only you can see this draft until approved.</p>' : '';
 
     app.innerHTML = '<article class="article-card">' +
+      pendingNotice +
       '<p class="meta">' + fmt(p.date) + ' · ' + (S[p.section] ? S[p.section].t + subLabel : "") + ' · ' + mins(p.body) + ' min read</p>' +
       '<h1>' + esc(p.title) + '</h1>' +
+      '<div class="post-actions" style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.85rem 0 1.25rem">' +
+        '<button type="button" class="btn secondary" id="share-btn" style="min-height:2.2rem;padding:.35rem .85rem;font-size:.86rem">Share Link</button>' +
+        (isOwner ? '<a class="btn secondary" href="#edit/' + encodeURIComponent(p.rawId) + '" style="min-height:2.2rem;padding:.35rem .85rem;font-size:.86rem">Edit Post</a>' : '') +
+        (isOwner ? '<button type="button" class="btn secondary" id="del-post-btn" style="min-height:2.2rem;padding:.35rem .85rem;font-size:.86rem;color:#c81e1e;border-color:#f3b8b8">Delete Post</button>' : '') +
+        '<span class="note" id="share-msg" role="status" style="font-size:.85rem"></span>' +
+      '</div>' +
       mediaHtml +
       '<div class="prose">' + md(p.body) + '</div>' +
       '<div class="author-banner">' +
@@ -529,7 +607,151 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '<a class="back" href="#' + p.section + '">← Back to ' + (S[p.section] ? S[p.section].t : "Home") + '</a>' +
     '</article>';
     setNav("", p.section);
+
+    var shareBtn = document.getElementById("share-btn");
+    var shareMsg = document.getElementById("share-msg");
+    if (shareBtn) {
+      shareBtn.onclick = function () { sharePost(p, shareMsg); };
+    }
+    var delBtn = document.getElementById("del-post-btn");
+    if (delBtn && isOwner) {
+      delBtn.onclick = function () {
+        delBtn.disabled = true;
+        deletePostById(p.rawId, p.media_url, function () {
+          location.hash = "#" + p.section;
+        }, function (errMsg) {
+          delBtn.disabled = false;
+          if (shareMsg) shareMsg.textContent = errMsg;
+        });
+      };
+    }
+
     renderComments(p.id);
+  }
+
+  function editPost(rawId) {
+    document.title = "Edit Publication · Paigham"; setBg("home"); setNav("write", "");
+    if (!sb) return needSb("Edit Publication");
+    if (!user) {
+      app.innerHTML = '<article class="article-card"><h1>Edit Publication</h1><p class="note">Please <a href="#login" style="color:var(--accent);font-weight:600">log in</a> to edit your posts.</p></article>';
+      return;
+    }
+
+    app.innerHTML = '<article class="article-card"><h1>Edit Publication</h1><p class="note">Loading post…</p></article>';
+
+    sb.from("posts").select("*").eq("id", rawId).eq("user_id", user.id).maybeSingle().then(function (r) {
+      if (r.error || !r.data) {
+        app.innerHTML = '<article class="article-card"><h1>Edit Publication</h1><p class="note">Post not found or you do not have permission to edit it. <a href="#login">Back to My Profile</a></p></article>';
+        return;
+      }
+      var item = r.data;
+      var currentMediaHtml = "";
+      if (item.media_url) {
+        currentMediaHtml = '<div id="cur-media-box" style="padding:.7rem .85rem;background:rgba(13,59,102,.05);border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap">' +
+          '<span class="note" style="margin:0">Current attachment: <strong>' + (item.media_type === "pdf" ? "PDF Document" : "Photo") + '</strong> · <a href="' + esc(safeUrl(item.media_url)) + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">View</a></span>' +
+          '<label style="display:inline-flex;align-items:center;gap:.4rem;font-size:.86rem;margin:0;cursor:pointer"><input type="checkbox" id="rm-media"> Remove attachment</label>' +
+        '</div>';
+      }
+
+      app.innerHTML = '<article class="article-card">' +
+        '<h1>Edit Publication</h1>' +
+        '<p class="note">Update your article details, text, or attachment below.</p>' +
+        '<form class="form" id="ef" style="margin-top:1.35rem">' +
+          '<label>Category<select name="section" id="esec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
+          '<label id="esub-wrap">Science Branch<select name="sub_section" id="esub-sel">' +
+            '<option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option>' +
+          '</select></label>' +
+          '<label>Format<select name="post_type" id="etype-sel">' +
+            '<option value="review">Review Article / Literature Synthesis</option>' +
+            '<option value="article">Research Note / Essay</option>' +
+            '<option value="thought">Thought / Open Question</option>' +
+          '</select></label>' +
+          '<label>Title <span class="req">*</span><input name="title" minlength="3" maxlength="140" required></label>' +
+          '<label>Abstract / Short Summary<input name="excerpt" maxlength="240"></label>' +
+          currentMediaHtml +
+          '<label>' + (item.media_url ? 'Replace Attachment (optional, max 5 MB)' : 'Attach PDF Paper or Photo Figure (optional, max 5 MB)') +
+            '<input type="file" name="media" id="e-media" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"></label>' +
+          '<div id="e-preview" class="preview-box" style="display:none"></div>' +
+          '<label>Full Text / Article Body <span class="req">*</span><textarea name="body" minlength="10" maxlength="25000" required></textarea></label>' +
+          '<div style="display:flex;gap:.75rem;flex-wrap:wrap">' +
+            '<button class="btn" type="submit" id="esub">Save Changes</button>' +
+            '<a class="btn secondary" href="#c-' + encodeURIComponent(item.id) + '">Cancel</a>' +
+          '</div>' +
+          '<p class="note" role="status" id="emsg"></p>' +
+        '</form>' +
+      '</article>';
+
+      var ef = document.getElementById("ef");
+      var secSel = document.getElementById("esec-sel");
+      var subWrap = document.getElementById("esub-wrap");
+      var subSel = document.getElementById("esub-sel");
+      var typeSel = document.getElementById("etype-sel");
+
+      secSel.value = S[item.section] ? item.section : "science";
+      if (item.sub_section) subSel.value = item.sub_section;
+      if (item.post_type) typeSel.value = item.post_type;
+      ef.title.value = item.title || "";
+      ef.excerpt.value = item.excerpt || "";
+      ef.body.value = item.body || "";
+
+      function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
+      secSel.onchange = toggleSub;
+      toggleSub();
+
+      var eMediaInput = document.getElementById("e-media");
+      var ePreview = document.getElementById("e-preview");
+      bindPreview(eMediaInput, ePreview, false);
+
+      ef.onsubmit = function (e) {
+        e.preventDefault();
+        var emsg = document.getElementById("emsg");
+        var esub = document.getElementById("esub");
+        var file = ef.media && ef.media.files ? ef.media.files[0] : null;
+        var rmCheck = document.getElementById("rm-media");
+        var removeOld = rmCheck && rmCheck.checked;
+        var fileErr = validateFile(file, false);
+        if (fileErr) { emsg.textContent = fileErr; return; }
+
+        esub.disabled = true;
+        emsg.textContent = file ? "Uploading new attachment & saving…" : "Saving changes…";
+
+        uploadFile(file, "post", false).then(function (uploaded) {
+          var finalMediaUrl = item.media_url || null;
+          var finalMediaType = item.media_type || null;
+          var oldPath = storagePathFromUrl(item.media_url);
+
+          if (uploaded.url) {
+            finalMediaUrl = uploaded.url;
+            finalMediaType = uploaded.type;
+            if (oldPath) sb.storage.from("attachments").remove([oldPath]).catch(function () {});
+          } else if (removeOld) {
+            finalMediaUrl = null;
+            finalMediaType = null;
+            if (oldPath) sb.storage.from("attachments").remove([oldPath]).catch(function () {});
+          }
+
+          return sb.from("posts").update({
+            section: ef.section.value,
+            sub_section: ef.section.value === "science" ? ef.sub_section.value : null,
+            post_type: ef.post_type.value,
+            title: ef.title.value.trim(),
+            excerpt: ef.excerpt.value.trim(),
+            body: ef.body.value,
+            media_url: finalMediaUrl,
+            media_type: finalMediaType
+          }).eq("id", item.id).eq("user_id", user.id);
+        }).then(function (upRes) {
+          esub.disabled = false;
+          if (upRes.error) { emsg.textContent = "Could not save: " + upRes.error.message; return; }
+          Promise.all([loadCommunity(), loadMyPosts()]).then(function () {
+            location.hash = "#c-" + encodeURIComponent(item.id);
+          });
+        }).catch(function (err) {
+          esub.disabled = false;
+          emsg.textContent = err.message || "Error saving changes.";
+        });
+      };
+    });
   }
 
   function about() {
@@ -599,7 +821,48 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
           '</div>' +
           '<p class="note" role="status" id="msg"></p>' +
         '</form>' +
+        '<div id="my-posts-box" style="margin-top:2.2rem"></div>' +
       '</article>';
+
+      var myBox = document.getElementById("my-posts-box");
+      if (myBox) {
+        if (!myPosts.length) {
+          myBox.innerHTML = '<h2 style="font-size:1.25rem;margin-bottom:.5rem">My Publications</h2><p class="note">You haven’t submitted any articles yet. <a href="#write" style="color:var(--accent);font-weight:600">Publish your first post →</a></p>';
+        } else {
+          myBox.innerHTML = '<h2 style="font-size:1.25rem;margin-bottom:.75rem">My Publications (' + myPosts.length + ')</h2>' +
+            '<div style="display:grid;gap:.75rem">' +
+            myPosts.map(function (mp) {
+              var mapped = mapCommunityRow(mp);
+              var statusTag = mp.approved ? '<span style="color:#0f766e;font-weight:600">Published</span>' : '<span style="color:#b45309;font-weight:600">Pending Approval</span>';
+              return '<div style="padding:.85rem 1rem;border:1px solid rgba(13,59,102,.15);border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap">' +
+                '<div>' +
+                  '<a href="#c-' + encodeURIComponent(mp.id) + '" style="font-weight:600;color:var(--ink);text-decoration:none">' + esc(mp.title) + '</a>' +
+                  '<div class="note" style="font-size:.82rem;margin-top:.2rem">' + fmt(mp.created_at) + ' · ' + (S[mp.section] ? S[mp.section].t : esc(mp.section)) + ' · ' + statusTag + '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:.5rem;align-items:center">' +
+                  '<button type="button" class="linkbtn my-share" data-id="' + esc(mapped.id) + '">Share</button> · ' +
+                  '<a class="linkbtn" href="#edit/' + encodeURIComponent(mp.id) + '" style="text-decoration:none">Edit</a> · ' +
+                  '<button type="button" class="linkbtn my-del" data-id="' + esc(mp.id) + '" style="color:#c81e1e">Delete</button>' +
+                '</div>' +
+              '</div>';
+            }).join("") +
+            '</div>';
+
+          myBox.querySelectorAll(".my-share").forEach(function (btn) {
+            btn.onclick = function () {
+              var target = myPosts.filter(function (x) { return "c-" + x.id === btn.dataset.id; })[0];
+              if (target) sharePost(mapCommunityRow(target), document.getElementById("msg"));
+            };
+          });
+          myBox.querySelectorAll(".my-del").forEach(function (btn) {
+            btn.onclick = function () {
+              var target = myPosts.filter(function (x) { return String(x.id) === btn.dataset.id; })[0];
+              if (!target) return;
+              deletePostById(target.id, target.media_url, function () { login(); });
+            };
+          });
+        }
+      }
 
       app.querySelector("article").insertAdjacentHTML("beforeend",
         '<h2 style="font-size:1.2rem;margin-top:2rem">Change password</h2>' +
@@ -705,6 +968,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
       document.getElementById("out").onclick = function () {
         profile = null;
+        myPosts = [];
         sb.auth.signOut();
       };
       return;
@@ -754,319 +1018,4 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         '<p class="note">Enter your account email and we will send a 6-digit recovery code.</p>' +
         '<form class="form" id="fform" style="margin-top:1.25rem">' +
           '<label>Email Address<input type="email" name="email" autocomplete="email" required></label>' +
-          '<button class="btn" type="submit">Send Recovery Code</button>' +
-          '<p class="note" role="status" id="msg"></p>' +
-        '</form>' +
-        '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="to-login" type="button">← Back to Log in</button></p>' +
-      '</article>';
-      var fmsg = function (t) { document.getElementById("msg").textContent = t; };
-      document.getElementById("to-login").onclick = function () { mode = "login"; login(); };
-      document.getElementById("fform").onsubmit = function (e) {
-        e.preventDefault();
-        var email = e.target.email.value.trim();
-        fmsg("Sending recovery code…");
-        sb.auth.resetPasswordForEmail(email).then(function (r) {
-          if (r.error) return fmsg(AUTH_ERR(r.error.message));
-          pendingEmail = email; mode = "reset"; login();
-        });
-      };
-      return;
-    }
-
-    // Step 2C: recovery code + new password
-    if (mode === "reset") {
-      app.innerHTML = '<article class="article-card" style="max-width:32rem;margin:2rem auto">' +
-        '<h1>Enter Recovery Code</h1>' +
-        '<p class="note">Enter the 6-digit code sent to <strong>' + esc(pendingEmail) + '</strong> and choose a new password.</p>' +
-        '<form class="form" id="rform" style="margin-top:1.25rem">' +
-          '<label>6-Digit Recovery Code<input type="text" name="token" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" autocomplete="one-time-code" placeholder="123456" required></label>' +
-          '<label>New Password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="new-password" required></label>' +
-          '<button class="btn" type="submit">Update Password &amp; Log In</button>' +
-          '<p class="note" role="status" id="msg"></p>' +
-        '</form>' +
-        '<p class="note" style="margin-top:1.25rem"><button class="linkbtn" id="resend-rec" type="button">Resend code</button> · <button class="linkbtn" id="cancel-rec" type="button">Cancel</button></p>' +
-      '</article>';
-      var rmsg = function (t) { document.getElementById("msg").textContent = t; };
-      document.getElementById("cancel-rec").onclick = function () { mode = "login"; login(); };
-      document.getElementById("resend-rec").onclick = function () {
-        rmsg("Resending code…");
-        sb.auth.resetPasswordForEmail(pendingEmail).then(function (r) {
-          rmsg(r.error ? AUTH_ERR(r.error.message) : "New recovery code sent.");
-        });
-      };
-      document.getElementById("rform").onsubmit = function (e) {
-        e.preventDefault();
-        var token = e.target.token.value.trim(), newPw = e.target.password.value;
-        rmsg("Checking code…");
-        recovering = true;
-        sb.auth.verifyOtp({ email: pendingEmail, token: token, type: "recovery" }).then(function (r) {
-          if (r.error) throw new Error(r.error.message);
-          return sb.auth.updateUser({ password: newPw });
-        }).then(function (u) {
-          if (u.error) throw new Error(u.error.message);
-          recovering = false; mode = "login"; login();
-        }).catch(function (err) {
-          recovering = false;
-          rmsg(AUTH_ERR(err.message || "Could not reset password."));
-        });
-      };
-      return;
-    }
-
-    // Step 1: Log in with email + password, or create an account
-    var su = mode === "signup";
-    app.innerHTML = '<article class="article-card" style="max-width:34rem;margin:2rem auto">' +
-      '<h1>' + (su ? "Join Paigham Research Network" : "Log in to Paigham") + '</h1>' +
-      '<p class="note" style="margin-bottom:1.1rem">' + (su ? "Create your researcher account. We email you a 6-digit code once to confirm your address." : "Log in with your email and password. You stay logged in on this device.") + '</p>' +
-      '<form class="form" id="auth">' +
-        (su ? '<label>Full Name <span class="req">*</span><input name="name" maxlength="80" placeholder="e.g. Muhammad Sulaiman Saeed" required></label>' +
-              '<label>What do you study? <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Political Science" required></label>' +
-              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, UX design, politics" required></label>' : '') +
-        '<label>Email <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
-        '<label>Password' + (su ? ' (at least 8 characters)' : '') + ' <span class="req">*</span><input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
-        (su ? '<label>Confirm Password <span class="req">*</span><input type="password" name="password2" minlength="8" autocomplete="new-password" required></label>' : '') +
-        '<button class="btn" type="submit">' + (su ? "Create Account" : "Log in") + '</button>' +
-        '<p class="note" role="status" id="msg"></p>' +
-      '</form>' +
-      '<div style="margin-top:1.25rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">' +
-        '<span class="note">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New to Paigham? <button class="linkbtn" id="flip" type="button">Create account</button>') + '</span>' +
-        (su ? '' : '<button class="linkbtn" id="forgot" type="button">Forgot password?</button>') +
-      '</div>' +
-    '</article>';
-
-    var msg = function (t) { document.getElementById("msg").textContent = t; };
-    document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; login(); };
-    if (!su) document.getElementById("forgot").onclick = function () { mode = "forgot"; login(); };
-
-    document.getElementById("auth").onsubmit = function (e) {
-      e.preventDefault();
-      var f = e.target, email = f.email.value.trim(), pw = f.password.value;
-      if (su) {
-        if (pw !== f.password2.value) return msg("The two passwords don’t match.");
-        msg("Creating account…");
-        sb.auth.signUp({ email: email, password: pw, options: {
-          data: { name: f.name.value.trim(), study_field: f.study.value.trim(), future_interests: f.future.value.trim() },
-          emailRedirectTo: location.origin
-        } }).then(function (r) {
-          if (r.error) return msg(AUTH_ERR(r.error.message));
-          if (r.data.user && r.data.user.identities && !r.data.user.identities.length) return msg("This email already has an account. Log in, or tap “Forgot password”.");
-          if (r.data.session) return; // confirmation is off: already logged in
-          pendingEmail = email; mode = "verify"; login();
-        });
-      } else {
-        msg("Logging in…");
-        sb.auth.signInWithPassword({ email: email, password: pw }).then(function (r) {
-          if (r.error) {
-            if (/not confirmed/i.test(r.error.message)) {
-              pendingEmail = email;
-              sb.auth.resend({ type: "signup", email: email }).then(function () { mode = "verify"; login(); });
-              return;
-            }
-            return msg(AUTH_ERR(r.error.message));
-          }
-        });
-      }
-    };
-  }
-
-  function write(defaultSec) {
-    document.title = "Publish on Paigham · Paigham"; setBg("home"); setNav("write", "");
-    if (!sb) return needSb("Publish on Paigham");
-    if (!user) {
-      app.innerHTML = '<article class="article-card"><h1>Publish on Paigham</h1><p class="note">Log in or verify your email first to publish review articles across Science, share Art and design work, or post Politics &amp; Philosophy thoughts. <a href="#login" style="color:var(--accent);font-weight:600">Log in or create an account →</a></p></article>';
-      return;
-    }
-
-    var m = user.user_metadata || {};
-    var hasStudy = (profile && profile.study_field) || m.study_field;
-    if (!hasStudy) {
-      app.innerHTML = '<article class="article-card"><h1>Complete Your Researcher Profile First</h1><p class="note">Before publishing, please fill in what you study and your future interests on your profile page. <a href="#login" style="color:var(--accent);font-weight:600">Complete profile now →</a></p></article>';
-      return;
-    }
-
-    app.innerHTML = '<article class="article-card">' +
-      '<h1>Publish Review Article, Research Note, or Thought</h1>' +
-      '<p class="note">Submit review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post Politics &amp; Philosophy reflections. Supports Markdown, photos, and PDFs (max 5 MB).</p>' +
-      '<form class="form" id="wf" style="margin-top:1.35rem">' +
-        '<label>Category<select name="section" id="sec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
-        '<label id="sub-wrap">Science Branch<select name="sub_section">' +
-          '<option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option>' +
-        '</select></label>' +
-        '<label>Format<select name="post_type" id="type-sel">' +
-          '<option value="review">Review Article / Literature Synthesis</option>' +
-          '<option value="article">Research Note / Essay</option>' +
-          '<option value="thought">Thought / Open Question</option>' +
-        '</select></label>' +
-        '<label>Title <span class="req">*</span><input name="title" minlength="3" maxlength="140" placeholder="e.g. Mechanisms of CRISPR-Cas9 Off-Target Effects in Danio rerio" required></label>' +
-        '<label>Abstract / Short Summary<input name="excerpt" maxlength="240" placeholder="One or two sentences summarizing your key takeaway..."></label>' +
-        '<label>Attach PDF Paper or Photo Figure (optional, max 5 MB)<input type="file" name="media" id="w-media" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"></label>' +
-        '<div id="w-preview" class="preview-box" style="display:none"></div>' +
-        '<label>Full Text / Article Body <span class="req">*</span><textarea name="body" minlength="10" maxlength="25000" placeholder="Write your review article, experimental observations, or thoughts here (Markdown supported)..." required></textarea></label>' +
-        '<button class="btn" type="submit" id="wsub">Submit for Publication</button>' +
-        '<p class="note" role="status" id="msg"></p>' +
-      '</form>' +
-    '</article>';
-
-    var secSel = document.getElementById("sec-sel");
-    var subWrap = document.getElementById("sub-wrap");
-    var typeSel = document.getElementById("type-sel");
-    if (defaultSec && S[defaultSec]) {
-      secSel.value = defaultSec;
-      if (defaultSec === "politics" || defaultSec === "philosophy") typeSel.value = "thought";
-    }
-    function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
-    secSel.onchange = toggleSub;
-    toggleSub();
-
-    var wMediaInput = document.getElementById("w-media");
-    var wPreview = document.getElementById("w-preview");
-    bindPreview(wMediaInput, wPreview, false);
-
-    document.getElementById("wf").onsubmit = function (e) {
-      e.preventDefault();
-      var now = Date.now();
-      var msg = document.getElementById("msg");
-      var wsub = document.getElementById("wsub");
-      if (now - lastActionAt < 10000) { msg.textContent = "Please wait a few seconds before submitting again."; return; }
-      var f = e.target;
-      var file = f.media && f.media.files ? f.media.files[0] : null;
-      var fileErr = validateFile(file, false);
-      if (fileErr) { msg.textContent = fileErr; return; }
-
-      lastActionAt = now;
-      wsub.disabled = true;
-      msg.textContent = file ? "Uploading attachment & submitting…" : "Submitting…";
-
-      uploadFile(file, "post", false).then(function (uploaded) {
-        var displayName = (profile && profile.full_name) || m.name || user.email.split("@")[0];
-        var studyField = (profile && profile.study_field) || m.study_field || "";
-        var avatarUrl = (profile && profile.avatar_url) || m.avatar_url || null;
-        var instaHandle = (profile && profile.instagram) || m.instagram || "";
-
-        var payload = {
-          section: f.section.value,
-          sub_section: f.section.value === "science" ? f.sub_section.value : null,
-          post_type: f.post_type.value,
-          title: f.title.value.trim(),
-          excerpt: f.excerpt.value.trim(),
-          body: f.body.value,
-          media_url: uploaded.url,
-          media_type: uploaded.type,
-          author_name: displayName.slice(0, 80),
-          author_study: studyField.slice(0, 120) || null,
-          author_avatar: avatarUrl,
-          instagram: ig(instaHandle) || null
-        };
-        return sb.from("posts").insert(payload);
-      }).then(function (r) {
-        wsub.disabled = false;
-        if (r.error) { msg.textContent = "Couldn’t submit: " + r.error.message; return; }
-        f.reset();
-        if (wPreview) { wPreview.innerHTML = ""; wPreview.style.display = "none"; }
-        toggleSub();
-        msg.textContent = "Submitted! Your work will appear on the feed once approved.";
-      }).catch(function (err) {
-        wsub.disabled = false;
-        msg.textContent = err.message || "Upload error.";
-      });
-    };
-  }
-
-  function route() {
-    var raw; try { raw = decodeURIComponent(location.hash.replace(/^#\/?/, "")); } catch (_e) { raw = ""; }
-    var parts = raw.split("?");
-    var h = parts[0];
-    if (h === "geopolitics") h = "politics"; else if (h === "models") h = "art";
-    var params = new URLSearchParams(parts[1] || "");
-    if (!h) home();
-    else if (S[h]) section(h);
-    else if (h === "about") about();
-    else if (h === "login") login();
-    else if (h === "write") write(params.get("section"));
-    else post(h);
-    window.scrollTo(0, 0);
-  }
-
-  function syncProfileOnLogin() {
-    if (!sb || !user) return Promise.resolve();
-    return sb.from("profiles").select("*").eq("id", user.id).maybeSingle().then(function (r) {
-      if (r.data) {
-        profile = r.data;
-        return;
-      }
-      var m = user.user_metadata || {};
-      if (m.study_field && m.future_interests) {
-        var newProf = {
-          id: user.id,
-          full_name: (m.name || user.email.split("@")[0]).slice(0, 80),
-          study_field: String(m.study_field).slice(0, 120),
-          future_interests: String(m.future_interests).slice(0, 300),
-          bio: m.bio || null,
-          instagram: ig(m.instagram) || null,
-          avatar_url: m.avatar_url || null
-        };
-        return sb.from("profiles").upsert(newProf).then(function () {
-          profile = newProf;
-          return loadAllProfiles();
-        });
-      }
-    });
-  }
-
-  function loadMyProfile() {
-    if (!sb || !user) { profile = null; return Promise.resolve(); }
-    return sb.from("profiles").select("*").eq("id", user.id).maybeSingle().then(function (r) {
-      profile = r.data || null;
-    });
-  }
-
-  function loadAllProfiles() {
-    if (!sb) return Promise.resolve();
-    return sb.from("profiles").select("id,full_name,study_field,future_interests,bio,instagram,avatar_url").order("updated_at", { ascending: false }).limit(20)
-      .then(function (r) { profilesList = r.data || []; });
-  }
-
-  function loadCommunity() {
-    if (!sb) return Promise.resolve();
-    return sb.from("posts").select("id,title,section,sub_section,post_type,excerpt,body,media_url,media_type,created_at,author_name,author_study,author_avatar,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
-      .then(function (r) { community = r.data || []; });
-  }
-
-  function refresh() {
-    document.getElementById("nav-login").textContent = user ? "My Profile" : "Log in / Join";
-    if (recovering) return;
-    if (/^#(login|write)/.test(location.hash)) route();
-  }
-
-  var rig = document.getElementById("rig");
-  if (!window.matchMedia("(prefers-reduced-motion:reduce)").matches) {
-    window.addEventListener("pointermove", function (e) {
-      rig.style.setProperty("--ry", ((e.clientX / innerWidth - .5) * 30) + "deg");
-      rig.style.setProperty("--rx", ((.5 - e.clientY / innerHeight) * 20) + "deg");
-    });
-  }
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        regs.forEach(function (reg) { reg.update(); });
-      });
-      navigator.serviceWorker.register("sw.js");
-    });
-  }
-  window.addEventListener("hashchange", route);
-  route();
-
-  if (sb) {
-    Promise.all([loadCommunity(), loadAllProfiles()]).then(function () {
-      if (!/^#(login|write|about)/.test(location.hash)) route();
-    });
-    sb.auth.getSession().then(function (r) {
-      user = r.data.session ? r.data.session.user : null;
-      syncProfileOnLogin().then(refresh);
-    });
-    sb.auth.onAuthStateChange(function (_e, s) {
-      user = s ? s.user : null;
-      syncProfileOnLogin().then(refresh);
-    });
-  }
-})();
+          '<button class="btn
