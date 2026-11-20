@@ -147,7 +147,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   var app = document.getElementById("app");
   var cfg = window.PAIGHAM_CONFIG || {};
   var sb = (cfg.supabaseUrl && cfg.supabaseKey && window.supabase)
-    ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { flowType: "pkce" } }) : null;
+    ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          storageKey: "paigham-auth"
+        }
+      })
+    : null;
   var user = null, mode = "login", community = [], sciSub = "all";
 
   var S = {
