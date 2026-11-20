@@ -8,12 +8,12 @@
 */
 window.POSTS = [
   {
-    slug: "why-paigham",
-    section: "science",
-    title: "Why I named this place Paigham",
+    slug: "scn1lab-seizures",
+    section: "zebrafish",
+    title: "Heat-induced seizures in scn1lab larvae",
     date: "2026-11-18",
-    excerpt: "Paigham means message. This is where mine go.",
-    body: `
+    excerpt: "How a tiny fish models a human epilepsy.",
+    body: `googlescholer.com
 Paigham (پیغام) means **message**. Every post here is one: something I learned, something I noticed, something I couldn't stop thinking about.
 
 ## What you'll find here
