@@ -146,16 +146,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 (function () {
   var app = document.getElementById("app");
   var cfg = window.PAIGHAM_CONFIG || {};
-  var sb = (cfg.supabaseUrl && cfg.supabaseKey && window.supabase)
-    ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {
+  var sb = null;
+  try {
+    if (cfg.supabaseUrl && cfg.supabaseKey && window.supabase) {
+      sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: true,
           storageKey: "paigham-auth"
         }
-      })
-    : null;
+      });
+    }
+  } catch (err) {
+    console.error("Supabase init error:", err);
+  }
+
   var user = null, mode = "login", community = [], sciSub = "all";
 
   var S = {
@@ -188,22 +194,40 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   };
 
   var keys = Object.keys(S);
-  document.getElementById("year").textContent = new Date().getFullYear();
-  document.getElementById("tabs").innerHTML = keys.map(function (k) {
-    return '<a href="#' + k + '" data-k="' + k + '">' + S[k].t + '</a>';
-  }).join("");
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  DOMPurify.addHook("afterSanitizeAttributes", function (n) {
-    if (n.tagName === "A") { n.setAttribute("rel", "noopener nofollow ugc"); n.setAttribute("target", "_blank"); }
-  });
-  function fmt(d) { return new Date(d.slice(0, 10) + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); }
-  function mins(t) { return Math.max(1, Math.round(t.split(/\s+/).length / 220)); }
-  function md(t) { return DOMPurify.sanitize(window.marked ? marked.parse(t) : t.replace(/</g, "&lt;")); }
+  var tabsEl = document.getElementById("tabs");
+  if (tabsEl) {
+    tabsEl.innerHTML = keys.map(function (k) {
+      return '<a href="#' + k + '" data-k="' + k + '">' + S[k].t + '</a>';
+    }).join("");
+  }
+
+  if (window.DOMPurify) {
+    DOMPurify.addHook("afterSanitizeAttributes", function (n) {
+      if (n.tagName === "A") { n.setAttribute("rel", "noopener nofollow ugc"); n.setAttribute("target", "_blank"); }
+    });
+  }
+
+  function esc(s) {
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function fmt(d) {
+    var dt = new Date(String(d).slice(0, 10) + "T00:00:00");
+    return isNaN(dt.getTime()) ? String(d) : dt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  }
+  function mins(t) { return Math.max(1, Math.round(String(t || "").split(/\s+/).length / 220)); }
+  function md(t) {
+    var raw = window.marked ? marked.parse(String(t || "")) : esc(t);
+    return window.DOMPurify ? DOMPurify.sanitize(raw) : raw;
+  }
   function ig(h) { return /^[A-Za-z0-9._]{1,30}$/.test(h || "") ? h : ""; }
   function setBg(k) { document.getElementById("photo").style.setProperty("--photo", "url(img/" + (k || "home") + ".jpg)"); }
   function setNav(which, sec) {
     ["write", "about", "login"].forEach(function (k) {
       var el = document.getElementById("nav-" + k);
+      if (!el) return;
       if (k === which) el.setAttribute("aria-current", "page"); else el.removeAttribute("aria-current");
     });
     document.querySelectorAll("#tabs a").forEach(function (a) {
@@ -211,18 +235,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     });
   }
   function all() {
-    var mine = (window.POSTS || []).map(function (p) {
-      return { id: p.slug, title: p.title, date: p.date, section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" };
+    var mine = (Array.isArray(window.POSTS) ? window.POSTS : []).map(function (p) {
+      return { id: p.slug, title: p.title, date: p.date || "2026-01-01", section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" };
     });
-    var com = community.map(function (p) {
-      return { id: "c-" + p.id, title: p.title, date: p.created_at, section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) };
+    var com = (Array.isArray(community) ? community : []).map(function (p) {
+      return { id: "c-" + p.id, title: p.title, date: p.created_at || "2026-01-01", section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) };
     });
-    return mine.concat(com).sort(function (a, b) { return b.date.localeCompare(a.date); });
+    return mine.concat(com).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
   }
   function rows(list, emptyMsg) {
     if (!list.length) return '<p class="empty">' + (emptyMsg || 'Nothing here yet. Be the first: <a href="#write">upload your blog</a>.') + '</p>';
     return '<div>' + list.map(function (p) {
-      return '<a class="row" href="#' + encodeURIComponent(p.id) + '"><time datetime="' + p.date.slice(0, 10) + '">' + fmt(p.date) + '</time><div><h3></h3><p></p><small></small></div></a>';
+      return '<a class="row" href="#' + encodeURIComponent(p.id) + '"><time datetime="' + String(p.date).slice(0, 10) + '">' + fmt(p.date) + '</time><div><h3></h3><p></p><small></small></div></a>';
     }).join("") + '</div>';
   }
   function fillRows(list) {
@@ -298,8 +322,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       sb.from("comments").select("id,user_id,author_name,instagram,body,created_at").eq("post_id", postId).order("created_at", { ascending: true })
         .then(function (r) {
           var items = r.data || [];
-          document.getElementById("ccount").textContent = items.length;
+          var countEl = document.getElementById("ccount");
           var clist = document.getElementById("clist");
+          if (!countEl || !clist) return;
+          countEl.textContent = items.length;
           if (!items.length) {
             clist.innerHTML = '<p class="note">No comments yet. Be the first to respond.</p>';
             return;
@@ -428,9 +454,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       document.getElementById("out").onclick = function () { sb.auth.signOut(); };
       return;
     }
-    document.getElementById("out").onclick = function () { sb.auth.signOut(); };
-      return;
-    }
     var su = mode === "signup";
     var isInApp = /Instagram|FBAN|FBAV|WhatsApp/i.test(navigator.userAgent);
     var inAppWarning = isInApp
@@ -439,6 +462,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     app.innerHTML = '<article><h1>' + (su ? "Create account" : "Log in") + '</h1>' +
       inAppWarning +
       '<form class="form" id="auth" style="max-width:22rem"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
+      '<label>Password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
       '<button class="btn" type="submit">' + (su ? "Create account" : "Log in") + '</button><p class="note" role="status" id="msg"></p></form>' +
       '<p class="note" style="margin-top:1.5rem">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
     var msg = function (t) { document.getElementById("msg").textContent = t; };
@@ -533,7 +557,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       rig.style.setProperty("--rx", ((.5 - e.clientY / innerHeight) * 20) + "deg");
     });
   }
-  if ("serviceWorker" in navigator) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js"); });
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (reg) { reg.update(); });
+      });
+      navigator.serviceWorker.register("sw.js");
+    });
+  }
   window.addEventListener("hashchange", route);
   route();
   if (sb) {
