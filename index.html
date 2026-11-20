@@ -4,52 +4,64 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Paigham</title>
-<meta name="description" content="Paigham: journal entries, essays and notes.">
+<meta name="description" content="Paigham: science, criminology, zebrafish and geopolitics writing.">
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Noto+Nastaliq+Urdu:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --paper:#f4f2ec; --ink:#45433f; --soft:#7a766e; --line:#dcd8cd; --accent:#34436b;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){--paper:#1d1c1a; --ink:#e8e5dd; --soft:#a29d92; --line:#36342f; --accent:#9fb2e6; color-scheme:dark;}
-}
-:root[data-theme="dark"]{--paper:#1d1c1a; --ink:#e8e5dd; --soft:#a29d92; --line:#36342f; --accent:#9fb2e6; color-scheme:dark;}
+:root{--paper:#f4f2ec;--paper-rgb:244,242,236;--ink:#45433f;--soft:#6f6b63;--line:#dcd8cd;--accent:#34436b;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1d1c1a;--paper-rgb:29,28,26;--ink:#e8e5dd;--soft:#a29d92;--line:#36342f;--accent:#9fb2e6;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#1d1c1a;--paper-rgb:29,28,26;--ink:#e8e5dd;--soft:#a29d92;--line:#36342f;--accent:#9fb2e6;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-padding-top:1rem}
-body{margin:0;background:var(--paper);color:var(--ink);font:1.125rem/1.7 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--paper);color:var(--ink);font:1.125rem/1.7 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 a{color:inherit}
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-.wrap{max-width:42rem;margin:0 auto;padding:0 1.5rem}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
 
-header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:1.5rem;padding-bottom:1.5rem}
-.brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;font-weight:600;font-size:1.25rem}
-.brand img{width:2.5rem;height:2.5rem;border-radius:.6rem;display:block}
-nav{display:flex;gap:1.5rem;font-size:1rem}
+/* Background: topic photo + 3D logo */
+.photo{position:fixed;inset:0;z-index:0;background:var(--photo,none) center/cover no-repeat;transition:background-image .4s}
+.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--paper-rgb),.82),rgba(var(--paper-rgb),.94))}
+.stage{position:fixed;inset:0;z-index:1;perspective:900px;pointer-events:none;overflow:hidden;display:grid;place-items:center}
+.stage .rig{width:min(80vmin,34rem);aspect-ratio:1;transform-style:preserve-3d;transform:rotateX(var(--rx,8deg)) rotateY(var(--ry,-14deg));transition:transform .15s linear}
+.stage img{position:absolute;inset:0;width:100%;height:100%;border-radius:18%}
+.stage .l1{opacity:.06;transform:translateZ(-160px) scale(1.15);filter:blur(3px)}
+.stage .l2{opacity:.10;transform:translateZ(-60px)}
+.stage .l3{opacity:.07;transform:translateZ(40px) scale(.96);mix-blend-mode:multiply}
+:root[data-theme="dark"] .stage img,
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stage img{filter:invert(1)}}
+
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:1.25rem;padding-bottom:.75rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;font-weight:600;font-size:1.25rem}
+.brand img{width:2.25rem;height:2.25rem;border-radius:.55rem}
+nav{display:flex;gap:1.25rem;font-size:1rem;flex-wrap:wrap}
 nav a{text-decoration:none;color:var(--soft)}
 nav a:hover,nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-underline-offset:.35em}
+.tabs{display:flex;gap:1.25rem;flex-wrap:wrap;padding-bottom:1rem;border-bottom:1px solid var(--line);font-size:1rem}
+.tabs a{text-decoration:none;color:var(--soft)}
+.tabs a:hover,.tabs a[aria-current="page"]{color:var(--accent);font-weight:600}
 
-.hero{padding:3.5rem 0 2rem}
-.urdu{font-family:"Noto Nastaliq Urdu",serif;font-weight:500;font-size:clamp(3.5rem,14vw,6rem);line-height:1.9;margin:0;direction:rtl;text-align:left;display:block}
-.hero p{margin:.5rem 0 0;font-size:1.25rem;color:var(--soft);max-width:30rem}
+.hero{padding:3rem 0 1.5rem}
+.hero h1{font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.1;margin:0 0 .75rem;font-weight:600;letter-spacing:-.01em}
+.hero p{margin:0;font-size:1.2rem;color:var(--soft);max-width:32rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin:2rem 0}
+.card{display:flex;flex-direction:column;justify-content:flex-end;min-height:11rem;padding:1.1rem 1.25rem;text-decoration:none;color:#f6f4ee;border-radius:.6rem;background:linear-gradient(transparent 20%,rgba(10,12,20,.82)),var(--c1) center/cover;background-color:var(--c2)}
+.card h2{margin:0;font-size:1.4rem}
+.card p{margin:.2rem 0 0;font-size:.98rem;opacity:.9;line-height:1.45}
+.card:hover h2{text-decoration:underline;text-underline-offset:.2em}
+.h2s{font-size:1.2rem;margin:2.5rem 0 .5rem}
 
-.dots{display:flex;gap:.45rem;margin:2.5rem 0}
-.dots i{width:.7rem;height:.55rem;background:var(--ink);border-radius:55% 45% 60% 40%;transform:rotate(-24deg);display:block}
-.dots i:nth-child(2){transform:rotate(12deg) translateY(.25rem)}
-.dots i:nth-child(3){transform:rotate(-8deg)}
-
-.row{display:grid;grid-template-columns:9rem 1fr;gap:0 1.5rem;padding:1.5rem 0;border-top:1px solid var(--line);text-decoration:none}
+.row{display:grid;grid-template-columns:9rem 1fr;gap:0 1.5rem;padding:1.4rem 0;border-top:1px solid var(--line);text-decoration:none}
 .row:last-child{border-bottom:1px solid var(--line)}
 .row time{font-size:.95rem;color:var(--soft);padding-top:.35rem}
-.row h2{margin:0;font-size:1.5rem;line-height:1.3;font-weight:600}
-.row p{margin:.35rem 0 0;color:var(--soft)}
-.row:hover h2{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
+.row h3{margin:0;font-size:1.4rem;line-height:1.3;font-weight:600}
+.row p{margin:.3rem 0 0;color:var(--soft)}
+.row small{display:block;margin-top:.3rem;color:var(--soft);font-size:.9rem}
+.row:hover h3{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
 
 .meta{color:var(--soft);font-size:1rem;margin:2rem 0 0}
-article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 2rem;font-weight:600;letter-spacing:-.01em}
+article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 1.5rem;font-weight:600;letter-spacing:-.01em}
 .prose>*+*{margin-top:1.25rem}
 .prose h2{font-size:1.5rem;line-height:1.3;margin-top:2.5rem}
 .prose h3{font-size:1.2rem;margin-top:2rem}
@@ -57,37 +69,38 @@ article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 2re
 .prose blockquote{margin-left:0;padding-left:1.25rem;border-left:3px solid var(--ink);font-style:italic}
 .prose img{max-width:100%;height:auto;border-radius:.4rem}
 .prose pre{overflow-x:auto;padding:1rem;border:1px solid var(--line);border-radius:.4rem;font-size:.95rem}
-.prose code{font-size:.9em}
-.back{display:inline-block;font-size:1rem;color:var(--soft)}
+.back{display:inline-block;margin-top:2rem;font-size:1rem;color:var(--soft)}
 .empty{color:var(--soft);padding:2rem 0}
+.by a{color:var(--accent)}
 
-.form{display:grid;gap:1rem;max-width:22rem}
+.form{display:grid;gap:1rem;max-width:34rem}
 .form label{display:grid;gap:.35rem;font-size:1rem;color:var(--soft)}
-.form input{font:inherit;color:var(--ink);padding:.65rem .8rem;border:1px solid var(--line);background:transparent;border-radius:.4rem}
-.btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer}
+.form input,.form select,.form textarea{font:inherit;color:var(--ink);padding:.65rem .8rem;border:1px solid var(--line);background:rgba(var(--paper-rgb),.7);border-radius:.4rem;width:100%}
+.form textarea{min-height:16rem;resize:vertical;line-height:1.5}
+.btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer;justify-self:start}
 .linkbtn{font:inherit;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
 .note{color:var(--soft);font-size:1rem;margin:0}
 .flinks{display:flex;gap:1.25rem}
-footer{margin-top:5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem}
+footer{margin-top:5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem;position:relative;z-index:2}
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-
-@media (max-width:34rem){
-  .row{grid-template-columns:1fr}
-  .row time{padding:0 0 .25rem}
-  body{font-size:1.0625rem}
-}
+@media (max-width:34rem){.row{grid-template-columns:1fr}.row time{padding:0 0 .25rem}body{font-size:1.0625rem}}
+@media (prefers-reduced-motion:reduce){.stage .rig,.photo{transition:none}}
 </style>
 </head>
 <body>
+<div class="photo" id="photo" aria-hidden="true"></div>
+<div class="stage" aria-hidden="true"><div class="rig" id="rig"><img class="l1" src="logo.png" alt=""><img class="l2" src="logo.png" alt=""><img class="l3" src="logo.png" alt=""></div></div>
+
 <header>
   <div class="wrap">
     <a class="brand" href="#" aria-label="Paigham home"><img src="logo.png" alt="Paigham logo"> Paigham</a>
     <nav aria-label="Main">
-      <a href="#" id="nav-home">Writing</a>
-      <a href="#about" id="nav-about">About</a>
+      <a href="#write" id="nav-write">Upload your blog</a>
+      <a href="#about" id="nav-about">About us</a>
       <a href="#login" id="nav-login">Log in</a>
     </nav>
   </div>
+  <div class="wrap"><div class="tabs" id="tabs"></div></div>
 </header>
 
 <main class="wrap" id="app" tabindex="-1"></main>
@@ -100,131 +113,197 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="posts.js"></script>
 <script>
 (function () {
   var app = document.getElementById("app");
-  var posts = (window.POSTS || []).slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
-  document.getElementById("year").textContent = new Date().getFullYear();
   var cfg = window.PAIGHAM_CONFIG || {};
   var sb = (cfg.supabaseUrl && cfg.supabaseKey && window.supabase)
     ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { flowType: "pkce" } }) : null;
-  var user = null, mode = "login";
+  var user = null, mode = "login", community = [];
+  // Photos go in /img/ (science.jpg, criminology.jpg, zebrafish.jpg, geopolitics.jpg, home.jpg). Gradients show until you add them.
+  var S = {
+    science: { t: "Science", d: "Discoveries, explainers and notes from the lab and the field.", c: "#2f5d62" },
+    criminology: { t: "Criminology", d: "Why crime happens, how it's studied and how justice works.", c: "#4a3b52" },
+    zebrafish: { t: "Zebrafish", d: "Zebrafish research, seizure models and what tiny fish teach us.", c: "#1f4e79" },
+    geopolitics: { t: "Geopolitics", d: "Power, borders, resources and how the world is shifting.", c: "#5a4a2e" }
+  };
+  var keys = Object.keys(S);
+  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById("tabs").innerHTML = keys.map(function (k) { return '<a href="#' + k + '" data-k="' + k + '">' + S[k].t + '</a>'; }).join("");
 
-  function fmt(d) {
-    return new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  DOMPurify.addHook("afterSanitizeAttributes", function (n) {
+    if (n.tagName === "A") { n.setAttribute("rel", "noopener nofollow ugc"); n.setAttribute("target", "_blank"); }
+  });
+  function fmt(d) { return new Date(d.slice(0, 10) + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); }
+  function mins(t) { return Math.max(1, Math.round(t.split(/\s+/).length / 220)); }
+  function md(t) { return DOMPurify.sanitize(window.marked ? marked.parse(t) : t.replace(/</g, "&lt;")); }
+  function ig(h) { return /^[A-Za-z0-9._]{1,30}$/.test(h || "") ? h : ""; }
+  function setBg(k) { document.getElementById("photo").style.setProperty("--photo", "url(img/" + (k || "home") + ".jpg)"); }
+  function setNav(which, sec) {
+    ["write", "about", "login"].forEach(function (k) {
+      var el = document.getElementById("nav-" + k);
+      if (k === which) el.setAttribute("aria-current", "page"); else el.removeAttribute("aria-current");
+    });
+    document.querySelectorAll("#tabs a").forEach(function (a) {
+      if (a.dataset.k === sec) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
   }
-  function mins(text) { return Math.max(1, Math.round(text.split(/\s+/).length / 220)); }
-  function md(text) {
-    try { return window.marked ? marked.parse(text) : "<p>" + text.replace(/</g, "&lt;") + "</p>"; }
-    catch (e) { return "<p>" + text.replace(/</g, "&lt;") + "</p>"; }
+  function all() {
+    var mine = (window.POSTS || []).map(function (p) { return { id: p.slug, title: p.title, date: p.date, section: p.section, excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" }; });
+    var com = community.map(function (p) { return { id: "c-" + p.id, title: p.title, date: p.created_at, section: p.section, excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) }; });
+    return mine.concat(com).sort(function (a, b) { return b.date.localeCompare(a.date); });
   }
-  var DOTS = '<div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>';
+  function rows(list) {
+    if (!list.length) return '<p class="empty">Nothing here yet. Be the first: <a href="#write">upload your blog</a>.</p>';
+    return '<div>' + list.map(function (p) {
+      return '<a class="row" href="#' + encodeURIComponent(p.id) + '"><time datetime="' + p.date.slice(0, 10) + '">' + fmt(p.date) + '</time><div><h3></h3><p></p><small></small></div></a>';
+    }).join("") + '</div>';
+  }
+  function fillRows(list) {
+    var r = app.querySelectorAll(".row");
+    list.forEach(function (p, i) {
+      r[i].querySelector("h3").textContent = p.title;
+      r[i].querySelector("p").textContent = p.excerpt || "";
+      r[i].querySelector("small").textContent = "By " + p.author + (S[p.section] ? " · " + S[p.section].t : "");
+    });
+  }
 
   function home() {
-    document.title = "Paigham";
-    var html = '<section class="hero"><span class="urdu" lang="ur">پیغام</span>' +
-      '<p>Journal entries, essays and notes. Paigham means message.</p></section>' + DOTS;
-    if (!posts.length) {
-      html += '<p class="empty">No posts yet. Add your first one in posts.js.</p>';
-    } else {
-      html += '<div>' + posts.map(function (p) {
-        return '<a class="row" href="#' + encodeURIComponent(p.slug) + '">' +
-          '<time datetime="' + p.date + '">' + fmt(p.date) + '</time>' +
-          '<div><h2></h2><p></p></div></a>';
-      }).join("") + '</div>';
-    }
-    app.innerHTML = html;
-    var rows = app.querySelectorAll(".row");
-    posts.forEach(function (p, i) {
-      rows[i].querySelector("h2").textContent = p.title;
-      rows[i].querySelector("p").textContent = p.excerpt || "";
-    });
-    setNav("home");
+    document.title = "Paigham"; setBg("home");
+    var list = all().slice(0, 8);
+    app.innerHTML = '<section class="hero"><h1>Science, crime, zebrafish and world affairs.</h1><p>Paigham means message. Read mine, or log in and post yours.</p></section>' +
+      '<div class="cards">' + keys.map(function (k) {
+        return '<a class="card" href="#' + k + '" style="--c1:url(img/' + k + '.jpg);--c2:' + S[k].c + '"><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p></a>';
+      }).join("") + '</div><h2 class="h2s">Latest</h2>' + rows(list);
+    fillRows(list); setNav("", "");
   }
-
-  function post(slug) {
-    var p = posts.filter(function (x) { return x.slug === slug; })[0];
-    if (!p) { app.innerHTML = '<p class="empty">That post doesn’t exist. <a href="#">Back to all posts</a></p>'; setNav(""); return; }
-    document.title = p.title + " · Paigham";
-    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div>' + DOTS +
-      '<a class="back" href="#">Back to all posts</a></article>';
-    app.querySelector(".meta").textContent = fmt(p.date) + (p.tag ? " · " + p.tag : "") + " · " + mins(p.body) + " min read";
+  function section(k) {
+    document.title = S[k].t + " · Paigham"; setBg(k);
+    var list = all().filter(function (p) { return p.section === k; });
+    app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p></section>' + rows(list);
+    fillRows(list); setNav("", k);
+  }
+  function post(id) {
+    var p = all().filter(function (x) { return x.id === id; })[0];
+    if (!p) { app.innerHTML = '<p class="empty">That post doesn’t exist. <a href="#">Back to all posts</a></p>'; setNav("", ""); return; }
+    document.title = p.title + " · Paigham"; setBg(p.section);
+    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div><p class="by note"></p><a class="back" href="#">Back to all posts</a></article>';
+    app.querySelector(".meta").textContent = fmt(p.date) + " · " + (S[p.section] ? S[p.section].t : "") + " · " + mins(p.body) + " min read";
     app.querySelector("h1").textContent = p.title;
     app.querySelector(".prose").innerHTML = md(p.body);
-    setNav("");
+    var by = app.querySelector(".by"); by.textContent = "Written by " + p.author;
+    if (p.ig) { var a = document.createElement("a"); a.href = "https://instagram.com/" + p.ig; a.target = "_blank"; a.rel = "noopener"; a.textContent = "@" + p.ig; by.append(" · Instagram: ", a); }
+    setNav("", p.section);
   }
-
   function about() {
-    document.title = "About · Paigham";
-    /* Edit the text below to tell people about you and how to reach you */
-    app.innerHTML = '<article><h1>About</h1><div class="prose">' +
-      '<p>Paigham is my space for writing. I share what I’m learning, thinking and making.</p>' +
-      '<p>Say hello: <a href="mailto:sulaiman.htg@gmail.com">sulaiman.htg@gmail.com</a>, or find me on <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a>.</p></div>' + DOTS +
-      '<a class="back" href="#">Back to all posts</a></article>';
-    setNav("about");
+    document.title = "About us · Paigham"; setBg("home");
+    app.innerHTML = '<article><h1>About us</h1><div class="prose">' +
+      '<p>Paigham is a space for writing on science, criminology, zebrafish research and geopolitics. I share what I’m learning, and anyone can log in and share what they know.</p>' +
+      '<h2>Contact</h2><ul><li>Email: <a href="mailto:sulaiman.htg@gmail.com">sulaiman.htg@gmail.com</a></li>' +
+      '<li>Instagram: <a href="https://instagram.com/thesulaimansaeed">@thesulaimansaeed</a></li></ul>' +
+      '<p>Want to write here? <a href="#write">Upload your blog</a>. Posts are reviewed before they go live.</p></div><a class="back" href="#">Back to all posts</a></article>';
+    setNav("about", "");
   }
-
+  function needSb(title) {
+    app.innerHTML = '<article><h1>' + title + '</h1><div class="prose"><p>Accounts aren’t connected yet. Add your Supabase keys in config.js to turn them on.</p></div></article>';
+  }
   function login() {
-    document.title = "Log in · Paigham";
-    setNav("login");
-    if (!sb) {
-      app.innerHTML = '<article><h1>Log in</h1><div class="prose"><p>Login isn’t connected yet. Add your Supabase keys in config.js to turn it on.</p></div>' + DOTS + '<a class="back" href="#">Back to all posts</a></article>';
-      return;
-    }
+    document.title = "Log in · Paigham"; setBg("home"); setNav("login", "");
+    if (!sb) return needSb("Log in");
     if (user) {
-      app.innerHTML = '<article><h1>Your account</h1><div class="prose"><p>Logged in as <strong class="who"></strong>.</p></div><p><button class="btn" id="out" type="button">Log out</button></p></article>';
+      var m = user.user_metadata || {};
+      app.innerHTML = '<article><h1>Your account</h1><p class="note">Logged in as <strong class="who"></strong>.</p>' +
+        '<form class="form" id="prof" style="margin-top:1.5rem"><label>Display name<input name="name" maxlength="60" required></label>' +
+        '<label>Instagram username (shown on your posts)<input name="ig" maxlength="30" placeholder="yourname" pattern="[A-Za-z0-9._]{1,30}"></label>' +
+        '<button class="btn" type="submit">Save profile</button><p class="note" role="status" id="msg"></p></form>' +
+        '<p style="margin-top:1.5rem"><button class="btn" id="out" type="button">Log out</button></p></article>';
       app.querySelector(".who").textContent = user.email;
+      var f = document.getElementById("prof"); f.name.value = m.name || ""; f.ig.value = m.instagram || "";
+      f.onsubmit = function (e) {
+        e.preventDefault();
+        var h = f.ig.value.trim().replace(/^@/, "");
+        if (h && !ig(h)) { document.getElementById("msg").textContent = "Instagram usernames use letters, numbers, dots and underscores only."; return; }
+        sb.auth.updateUser({ data: { name: f.name.value.trim(), instagram: h } }).then(function (r) {
+          document.getElementById("msg").textContent = r.error ? r.error.message : "Saved.";
+        });
+      };
       document.getElementById("out").onclick = function () { sb.auth.signOut(); };
       return;
     }
-    var signup = mode === "signup";
-    app.innerHTML = '<article><h1>' + (signup ? "Create account" : "Log in") + '</h1>' +
-      '<form class="form" id="auth"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
-      '<label>Password<input type="password" name="password" minlength="6" autocomplete="' + (signup ? "new-password" : "current-password") + '" required></label>' +
-      '<button class="btn" type="submit">' + (signup ? "Create account" : "Log in") + '</button>' +
-      '<p class="note" role="status" id="msg"></p></form>' +
-      '<p class="note" style="margin-top:1.5rem">' + (signup ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
+    var su = mode === "signup";
+    app.innerHTML = '<article><h1>' + (su ? "Create account" : "Log in") + '</h1>' +
+      '<form class="form" id="auth" style="max-width:22rem"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
+      '<label>Password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
+      '<button class="btn" type="submit">' + (su ? "Create account" : "Log in") + '</button><p class="note" role="status" id="msg"></p></form>' +
+      '<p class="note" style="margin-top:1.5rem">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
     var msg = function (t) { document.getElementById("msg").textContent = t; };
-    document.getElementById("flip").onclick = function () { mode = signup ? "login" : "signup"; login(); };
+    document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; login(); };
     document.getElementById("auth").onsubmit = function (e) {
       e.preventDefault();
       var email = e.target.email.value.trim(), pw = e.target.password.value;
       msg("Working…");
-      var call = signup
-        ? sb.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: location.origin + location.pathname } })
-        : sb.auth.signInWithPassword({ email: email, password: pw });
+      var call = su ? sb.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: location.origin + location.pathname } })
+                    : sb.auth.signInWithPassword({ email: email, password: pw });
       call.then(function (r) {
-        if (r.error) { msg(r.error.message); return; }
-        if (signup && !r.data.session) msg("Check your email to confirm your account, then log in.");
+        if (r.error) return msg(r.error.message);
+        if (su && !r.data.session) msg("Check your email to confirm your account, then log in.");
       });
     };
   }
-
-  function setNav(which) {
-    ["home", "about", "login"].forEach(function (k) {
-      var el = document.getElementById("nav-" + k);
-      if (k === which) el.setAttribute("aria-current", "page"); else el.removeAttribute("aria-current");
-    });
+  function write() {
+    document.title = "Upload your blog · Paigham"; setBg("home"); setNav("write", "");
+    if (!sb) return needSb("Upload your blog");
+    if (!user) { app.innerHTML = '<article><h1>Upload your blog</h1><div class="prose"><p>Log in first, then you can post here. <a href="#login">Log in or create an account</a>.</p></div></article>'; return; }
+    app.innerHTML = '<article><h1>Upload your blog</h1><p class="note">Write in Markdown. Posts are reviewed before they appear.</p>' +
+      '<form class="form" id="wf" style="margin-top:1.5rem"><label>Section<select name="section">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
+      '<label>Title<input name="title" minlength="3" maxlength="120" required></label>' +
+      '<label>Short summary<input name="excerpt" maxlength="200"></label>' +
+      '<label>Your post<textarea name="body" minlength="20" maxlength="20000" required></textarea></label>' +
+      '<button class="btn" type="submit">Submit for review</button><p class="note" role="status" id="msg"></p></form></article>';
+    document.getElementById("wf").onsubmit = function (e) {
+      e.preventDefault();
+      var f = e.target, m = user.user_metadata || {}, msg = document.getElementById("msg");
+      msg.textContent = "Submitting…";
+      sb.from("posts").insert({ section: f.section.value, title: f.title.value.trim(), excerpt: f.excerpt.value.trim(), body: f.body.value,
+        author_name: (m.name || user.email.split("@")[0]).slice(0, 60), instagram: ig(m.instagram) || null }).then(function (r) {
+        if (r.error) { msg.textContent = "Couldn’t submit: " + r.error.message; return; }
+        f.reset(); msg.textContent = "Submitted. It will appear once approved.";
+      });
+    };
   }
-
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
-    if (!h) home(); else if (h === "about") about(); else if (h === "login") login(); else post(h);
+    if (!h) home(); else if (S[h]) section(h); else if (h === "about") about(); else if (h === "login") login(); else if (h === "write") write(); else post(h);
     window.scrollTo(0, 0);
+  }
+  function loadCommunity() {
+    if (!sb) return Promise.resolve();
+    return sb.from("posts").select("id,title,section,excerpt,body,created_at,author_name,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
+      .then(function (r) { community = r.data || []; });
   }
   function refresh() {
     document.getElementById("nav-login").textContent = user ? "Account" : "Log in";
-    if (location.hash === "#login") login();
+    if (/^#(login|write)$/.test(location.hash)) route();
   }
-  if (sb) {
-    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; refresh(); });
-    sb.auth.onAuthStateChange(function (_e, s) { user = s ? s.user : null; refresh(); });
+  // 3D logo tilts with the pointer
+  var rig = document.getElementById("rig");
+  if (!window.matchMedia("(prefers-reduced-motion:reduce)").matches) {
+    window.addEventListener("pointermove", function (e) {
+      rig.style.setProperty("--ry", ((e.clientX / innerWidth - .5) * 30) + "deg");
+      rig.style.setProperty("--rx", ((.5 - e.clientY / innerHeight) * 20) + "deg");
+    });
   }
   window.addEventListener("hashchange", route);
   route();
+  if (sb) {
+    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; refresh(); });
+    sb.auth.onAuthStateChange(function (_e, s) { user = s ? s.user : null; refresh(); });
+    loadCommunity().then(function () { if (!/^#(login|write|about)$/.test(location.hash)) route(); });
+  }
 })();
 </script>
 </body>
