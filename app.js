@@ -341,7 +341,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '<div class="side-box">' +
         '<h3>Publish Your Work</h3>' +
         '<p class="note" style="font-size:.86rem;margin-bottom:.85rem">Upload review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post thoughts on Politics &amp; Finance.</p>' +
-        '<a class="btn" style="width:100%;min-height:2.4rem;font-size:.88rem" href="#write">+ Submit Article / PDF</a>' +
+        '<a class="btn" style="width:100%;min-height:2.4rem;font-size:.88rem" href="#write">Submit Work</a>' +
       '</div>' +
     '</aside>';
   }
@@ -350,15 +350,19 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     document.title = "Paigham — Research & Writing Network | M. Sulaiman Saeed"; setBg("home");
     var list = all().slice(0, 12);
     app.innerHTML = '<section class="hero">' +
-      '<h1>Science, Art, Politics &amp; Finance.</h1>' +
-      '<p>Founded by <strong>M. Sulaiman Saeed</strong> — a collaborative space to publish review articles, share art, design and UX/UI work, upload PDFs &amp; figures, and exchange ideas.</p>' +
+      '<div class="hero-eyebrow">پیغام <span>· INDEPENDENT RESEARCH &amp; ESSAYS</span></div>' +
+      '<h1>Science, <em>Art</em>, Politics<br>&amp; <em>Finance.</em></h1>' +
+      '<p>An independent space for curious minds — thoughtful research, visual culture, and clear-eyed essays on the forces shaping our world.</p>' +
+      '<div class="hero-byline">Founded by <strong>M. Sulaiman Saeed</strong></div>' +
       '<div class="hero-actions">' +
-        '<a class="btn" href="#write">+ Upload Review Article / Post</a>' +
-        '<a class="btn secondary" href="#login">' + (user ? "My Researcher Profile" : "Join with Email Code") + '</a>' +
+        '<a class="btn" href="#write">Write an Essay</a>' +
+        '<a class="btn secondary" href="#login">' + (user ? "Your Contributor Profile" : "Become a Contributor") + '</a>' +
       '</div>' +
     '</section>' +
-    '<div class="cards">' + keys.map(function (k) {
-      return '<a class="card" href="#' + k + '" style="--c1:url(img/' + k + '.jpg);--c2:' + S[k].c + '"><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p></a>';
+    '<div class="cards">' + keys.map(function (k, i) {
+      var labels = ["SCIENCE", "ART & DESIGN", "POLITICS", "FINANCE"];
+      var roman = ["01", "02", "03", "04"];
+      return '<a class="card card-' + k + '" href="#' + k + '"><span class="card-index">' + roman[i] + ' <i>·</i> ' + labels[i] + '</span><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p><span class="card-arrow" aria-hidden="true">↗</span></a>';
     }).join("") + '</div>' +
     '<div class="feed-layout">' +
       '<div><div class="feed-head"><h2>Recent Publications &amp; Thoughts</h2></div>' + feedCards(list) + '</div>' +
