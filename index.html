@@ -2,9 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Paigham</title>
-<meta name="description" content="Paigham: science, criminology, model organisms, geopolitics and philosophy writing.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paigham — M. Sulaiman Saeed</title>
+<meta name="description" content="Paigham by M. Sulaiman Saeed (Muhammad Sulaiman Saeed): writing, photos, PDFs, and research notes on science, criminology, model organisms, geopolitics, and philosophy.">
+<meta name="author" content="M. Sulaiman Saeed">
+<meta name="keywords" content="M. Sulaiman Saeed, Muhammad Sulaiman Saeed, Sulaiman Saeed, Paigham, paigham.live, Sakarya University, zebrafish research, science writing, criminology, geopolitics, philosophy">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://paigham.live/">
+
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; frame-src 'self' https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+<!-- Open Graph & Social SEO -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Paigham">
+<meta property="og:title" content="Paigham — M. Sulaiman Saeed">
+<meta property="og:description" content="Science, criminology, model organisms, geopolitics, and philosophy writing by M. Sulaiman Saeed.">
+<meta property="og:url" content="https://paigham.live/">
+<meta property="og:image" content="https://paigham.live/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Paigham — M. Sulaiman Saeed">
+<meta name="twitter:description" content="Science, criminology, model organisms, geopolitics, and philosophy writing by M. Sulaiman Saeed.">
+<meta name="twitter:image" content="https://paigham.live/icon-512.png">
+
+<!-- Structured Data for Google Person & Website Indexing -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://paigham.live/#website",
+      "url": "https://paigham.live/",
+      "name": "Paigham",
+      "alternateName": "Paigham by M. Sulaiman Saeed",
+      "description": "Science, criminology, model organisms, geopolitics and philosophy writing by M. Sulaiman Saeed.",
+      "publisher": { "@id": "https://paigham.live/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://paigham.live/#person",
+      "name": "M. Sulaiman Saeed",
+      "alternateName": ["Muhammad Sulaiman Saeed", "Sulaiman Saeed"],
+      "url": "https://paigham.live/",
+      "image": "https://paigham.live/dp.jpg",
+      "jobTitle": "Biology Undergraduate Researcher & Writer",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "Sakarya University"
+      },
+      "sameAs": [
+        "https://instagram.com/thesulaimansaeed",
+        "https://instagram.com/paigham.live"
+      ]
+    }
+  ]
+}
+</script>
+
 <link rel="icon" href="logo.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -15,96 +72,334 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#f4f2ec;--paper-rgb:244,242,236;--ink:#45433f;--soft:#6f6b63;--line:#dcd8cd;--accent:#34436b;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1d1c1a;--paper-rgb:29,28,26;--ink:#e8e5dd;--soft:#a29d92;--line:#36342f;--accent:#9fb2e6;color-scheme:dark}}
-:root[data-theme="dark"]{--paper:#1d1c1a;--paper-rgb:29,28,26;--ink:#e8e5dd;--soft:#a29d92;--line:#36342f;--accent:#9fb2e6;color-scheme:dark}
+:root{
+  --paper:#f4f2ec;
+  --paper-rgb:244,242,236;
+  --ink:#22211e;
+  --soft:#57534c;
+  --line:#cfc9bc;
+  --accent:#1e3a6e;
+  --accent-hover:#152a52;
+  --accent-ink:#ffffff;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#181715;
+    --paper-rgb:24,23,21;
+    --ink:#f2efe9;
+    --soft:#b5afa4;
+    --line:#3a3731;
+    --accent:#8ab0ff;
+    --accent-hover:#a8c5ff;
+    --accent-ink:#111318;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#181715;
+  --paper-rgb:24,23,21;
+  --ink:#f2efe9;
+  --soft:#b5afa4;
+  --line:#3a3731;
+  --accent:#8ab0ff;
+  --accent-hover:#a8c5ff;
+  --accent-ink:#111318;
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
-html{scroll-padding-top:1rem}
-body{margin:0;background:var(--paper);color:var(--ink);font:1.125rem/1.7 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+html{scroll-padding-top:1rem;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font:1.125rem/1.7 "Newsreader",Georgia,serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  overflow-x:hidden;
+  overflow-wrap:anywhere;
+}
 a{color:inherit}
-a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-.wrap{max-width:46rem;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem;position:relative;z-index:2}
 
 /* Background: topic photo + 3D logo */
 .photo{position:fixed;inset:0;z-index:0;background:var(--photo,none) center/cover no-repeat;transition:background-image .4s}
-.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--paper-rgb),.82),rgba(var(--paper-rgb),.94))}
+.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--paper-rgb),.86),rgba(var(--paper-rgb),.96))}
 .stage{position:fixed;inset:0;z-index:1;perspective:900px;pointer-events:none;overflow:hidden;display:grid;place-items:center}
 .stage .rig{width:min(80vmin,34rem);aspect-ratio:1;transform-style:preserve-3d;transform:rotateX(var(--rx,8deg)) rotateY(var(--ry,-14deg));transition:transform .15s linear}
 .stage img{position:absolute;inset:0;width:100%;height:100%;border-radius:18%}
-.stage .l1{opacity:.06;transform:translateZ(-160px) scale(1.15);filter:blur(3px)}
-.stage .l2{opacity:.10;transform:translateZ(-60px)}
-.stage .l3{opacity:.07;transform:translateZ(40px) scale(.96);mix-blend-mode:multiply}
+.stage .l1{opacity:.05;transform:translateZ(-160px) scale(1.15);filter:blur(3px)}
+.stage .l2{opacity:.08;transform:translateZ(-60px)}
+.stage .l3{opacity:.06;transform:translateZ(40px) scale(.96);mix-blend-mode:multiply}
 :root[data-theme="dark"] .stage img,
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stage img{filter:invert(1)}}
 
-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:1.25rem;padding-bottom:.75rem;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;font-weight:600;font-size:1.25rem}
-.brand img{width:2.25rem;height:2.25rem;border-radius:.55rem}
-nav{display:flex;gap:1.25rem;font-size:1rem;flex-wrap:wrap}
-nav a{text-decoration:none;color:var(--soft)}
-nav a:hover,nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-underline-offset:.35em}
-.tabs{display:flex;gap:1.25rem;flex-wrap:wrap;padding-bottom:1rem;border-bottom:1px solid var(--line);font-size:1rem}
-.tabs a{text-decoration:none;color:var(--soft)}
-.tabs a:hover,.tabs a[aria-current="page"]{color:var(--accent);font-weight:600}
+/* Header & Navigation */
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding-top:1.1rem;padding-bottom:.75rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;font-weight:600;font-size:1.3rem}
+.brand img{width:2.25rem;height:2.25rem;border-radius:.55rem;flex-shrink:0}
+nav{display:flex;align-items:center;gap:.5rem;font-size:.98rem;flex-wrap:wrap}
+nav a{
+  text-decoration:none;
+  color:var(--ink);
+  padding:.42rem .75rem;
+  border-radius:.4rem;
+  border:1px solid transparent;
+  font-weight:500;
+  transition:background .15s,border-color .15s,color .15s;
+}
+nav a:hover{border-color:var(--line);background:rgba(var(--paper-rgb),.8)}
+nav a[aria-current="page"]{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+  font-weight:600;
+}
+#nav-login{
+  border:1.5px solid var(--accent);
+  color:var(--accent);
+  font-weight:600;
+}
+#nav-login:hover,#nav-login[aria-current="page"]{
+  background:var(--accent);
+  color:var(--accent-ink);
+}
 
-.subtabs{display:flex;gap:.65rem;flex-wrap:wrap;margin:1.25rem 0 .5rem}
-.subtab{font:inherit;font-size:.95rem;padding:.35rem .85rem;border:1px solid var(--line);border-radius:999px;background:rgba(var(--paper-rgb),.65);color:var(--soft);cursor:pointer}
-.subtab:hover{color:var(--ink);border-color:var(--soft)}
-.subtab[aria-pressed="true"]{background:var(--accent);color:var(--paper);border-color:var(--accent);font-weight:600}
+.tabs{
+  display:flex;
+  gap:.5rem;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  padding:.25rem 0 .95rem;
+  border-bottom:1px solid var(--line);
+  font-size:.98rem;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{
+  text-decoration:none;
+  color:var(--ink);
+  white-space:nowrap;
+  padding:.4rem .8rem;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(var(--paper-rgb),.75);
+  transition:background .15s,color .15s,border-color .15s;
+}
+.tabs a:hover{border-color:var(--accent);color:var(--accent)}
+.tabs a[aria-current="page"]{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+  font-weight:600;
+}
 
-.hero{padding:3rem 0 1.5rem}
-.hero h1{font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.1;margin:0 0 .75rem;font-weight:600;letter-spacing:-.01em}
-.hero p{margin:0;font-size:1.2rem;color:var(--soft);max-width:34rem}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem;margin:2rem 0}
-.card{display:flex;flex-direction:column;justify-content:flex-end;min-height:11rem;padding:1.1rem 1.25rem;text-decoration:none;color:#f6f4ee;border-radius:.6rem;background:linear-gradient(transparent 20%,rgba(10,12,20,.82)),var(--c1) center/cover;background-color:var(--c2)}
-.card h2{margin:0;font-size:1.4rem}
-.card p{margin:.2rem 0 0;font-size:.98rem;opacity:.9;line-height:1.45}
+/* Sub-tabs */
+.subtabs{display:flex;gap:.55rem;flex-wrap:wrap;margin:1.25rem 0 .5rem}
+.subtab{
+  font:inherit;
+  font-size:.95rem;
+  font-weight:600;
+  min-height:2.5rem;
+  padding:.45rem 1rem;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  background:var(--paper);
+  color:var(--ink);
+  cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.subtab:hover{border-color:var(--accent);color:var(--accent)}
+.subtab[aria-pressed="true"]{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+}
+
+/* Hero & Topic Cards */
+.hero{padding:2.25rem 0 1.25rem}
+.hero h1{font-size:clamp(1.95rem,6.5vw,3.25rem);line-height:1.12;margin:0 0 .75rem;font-weight:600;letter-spacing:-.01em}
+.hero p{margin:0;font-size:1.15rem;color:var(--soft);max-width:36rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem;margin:1.75rem 0}
+.card{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:10.5rem;
+  padding:1.15rem 1.25rem;
+  text-decoration:none;
+  color:#ffffff;
+  border-radius:.65rem;
+  border:1px solid rgba(255,255,255,.15);
+  background:linear-gradient(transparent 10%,rgba(10,12,20,.88)),var(--c1) center/cover;
+  background-color:var(--c2);
+  transition:transform .15s ease;
+}
+.card:hover{transform:translateY(-2px)}
+.card h2{margin:0;font-size:1.35rem}
+.card p{margin:.25rem 0 0;font-size:.96rem;opacity:.94;line-height:1.45}
 .card:hover h2{text-decoration:underline;text-underline-offset:.2em}
-.h2s{font-size:1.2rem;margin:2.5rem 0 .5rem}
+.h2s{font-size:1.25rem;margin:2.25rem 0 .5rem}
 
-.row{display:grid;grid-template-columns:9rem 1fr;gap:0 1.5rem;padding:1.4rem 0;border-top:1px solid var(--line);text-decoration:none}
+/* Post Rows */
+.row{display:grid;grid-template-columns:9rem 1fr;gap:0 1.5rem;padding:1.3rem 0;border-top:1px solid var(--line);text-decoration:none}
 .row:last-child{border-bottom:1px solid var(--line)}
-.row time{font-size:.95rem;color:var(--soft);padding-top:.35rem}
-.row h3{margin:0;font-size:1.4rem;line-height:1.3;font-weight:600}
+.row time{font-size:.92rem;color:var(--soft);padding-top:.3rem}
+.row h3{margin:0;font-size:1.35rem;line-height:1.3;font-weight:600}
 .row p{margin:.3rem 0 0;color:var(--soft)}
-.row small{display:block;margin-top:.3rem;color:var(--soft);font-size:.9rem}
-.row:hover h3{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
+.row small{display:block;margin-top:.35rem;color:var(--soft);font-size:.88rem}
+.row:hover h3{color:var(--accent);text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1.5px}
+.badge{display:inline-block;padding:.1rem .45rem;border-radius:.3rem;font-size:.78rem;font-weight:600;background:var(--accent);color:var(--accent-ink);margin-left:.35rem;vertical-align:middle}
 
-.meta{color:var(--soft);font-size:1rem;margin:2rem 0 0}
-article h1{font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;margin:.5rem 0 1.5rem;font-weight:600;letter-spacing:-.01em}
-.prose>*+*{margin-top:1.25rem}
-.prose h2{font-size:1.5rem;line-height:1.3;margin-top:2.5rem}
-.prose h3{font-size:1.2rem;margin-top:2rem}
-.prose a{color:var(--accent);text-underline-offset:.2em}
-.prose blockquote{margin-left:0;padding-left:1.25rem;border-left:3px solid var(--ink);font-style:italic}
-.prose img{max-width:100%;height:auto;border-radius:.4rem}
-.prose pre{overflow-x:auto;padding:1rem;border:1px solid var(--line);border-radius:.4rem;font-size:.95rem}
-.back{display:inline-block;margin-top:2rem;font-size:1rem;color:var(--soft)}
-.empty{color:var(--soft);padding:2rem 0}
-.by a{color:var(--accent)}
+/* Article, Media Attachments & Founder Bio */
+.meta{color:var(--soft);font-size:.98rem;margin:1.75rem 0 0}
+article h1{font-size:clamp(1.85rem,6vw,2.7rem);line-height:1.15;margin:.5rem 0 1.35rem;font-weight:600;letter-spacing:-.01em}
+.prose>*+*{margin-top:1.2rem}
+.prose h2{font-size:1.45rem;line-height:1.3;margin-top:2.25rem}
+.prose h3{font-size:1.2rem;margin-top:1.85rem}
+.prose a{color:var(--accent);font-weight:600;text-underline-offset:.2em}
+.prose blockquote{margin-left:0;padding-left:1.25rem;border-left:3px solid var(--accent);font-style:italic}
+.prose img{max-width:100%;height:auto;border-radius:.45rem}
+.prose pre{overflow-x:auto;padding:1rem;border:1px solid var(--line);border-radius:.45rem;font-size:.92rem}
+
+.media-wrap{margin:1.5rem 0;border:1px solid var(--line);border-radius:.65rem;overflow:hidden;background:rgba(var(--paper-rgb),.8)}
+.media-wrap img{display:block;width:100%;max-height:36rem;object-fit:contain;background:#0f0f0f}
+.pdf-bar{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.85rem 1rem;background:rgba(var(--paper-rgb),.95);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.pdf-frame{width:100%;height:34rem;border:0;display:block}
+.cmedia{margin-top:.75rem}
+.cmedia img{max-width:100%;max-height:18rem;border-radius:.45rem;border:1px solid var(--line);display:block}
+
+.founder-box{
+  display:flex;
+  align-items:center;
+  gap:1.35rem;
+  padding:1.25rem;
+  margin:1.5rem 0;
+  border:1px solid var(--line);
+  border-radius:.75rem;
+  background:rgba(var(--paper-rgb),.75);
+}
+.founder-dp{
+  width:6.25rem;
+  height:6.25rem;
+  border-radius:50%;
+  object-fit:cover;
+  object-position:center;
+  border:3px solid var(--accent);
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  flex-shrink:0;
+  background:var(--line);
+}
+.founder-box p{margin:0}
+
+.back{display:inline-block;margin-top:2rem;font-size:1rem;color:var(--accent);font-weight:600}
+.empty{color:var(--soft);padding:1.75rem 0}
+.by a{color:var(--accent);font-weight:600}
 
 /* Comments */
 .comments{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--line)}
 .comments h2{font-size:1.35rem;margin:0 0 1rem}
 .clist{display:grid;gap:1rem;margin-bottom:1.75rem}
-.citem{padding:1rem 1.15rem;border:1px solid var(--line);border-radius:.5rem;background:rgba(var(--paper-rgb),.55)}
+.citem{padding:1rem 1.15rem;border:1px solid var(--line);border-radius:.55rem;background:rgba(var(--paper-rgb),.7)}
 .chead{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;font-size:.92rem;color:var(--soft);margin-bottom:.35rem;flex-wrap:wrap}
 .chead strong{color:var(--ink)}
 .cbody{margin:0;white-space:pre-wrap;line-height:1.55}
 
-.form{display:grid;gap:1rem;max-width:34rem}
-.form label{display:grid;gap:.35rem;font-size:1rem;color:var(--soft)}
-.form input,.form select,.form textarea{font:inherit;color:var(--ink);padding:.65rem .8rem;border:1px solid var(--line);background:rgba(var(--paper-rgb),.7);border-radius:.4rem;width:100%}
-.form textarea{min-height:16rem;resize:vertical;line-height:1.5}
-.form textarea.short{min-height:6rem}
-.btn{font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:.4rem;background:var(--ink);color:var(--paper);cursor:pointer;justify-self:start}
-.linkbtn{font:inherit;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
+/* Forms & High-Contrast Buttons */
+.form{display:grid;gap:1.1rem;max-width:34rem}
+.form label{display:grid;gap:.4rem;font-size:1rem;font-weight:600;color:var(--ink)}
+.form input,.form select,.form textarea{
+  font:inherit;
+  font-size:1rem;
+  color:var(--ink);
+  padding:.75rem .9rem;
+  border:1.5px solid var(--line);
+  background:var(--paper);
+  border-radius:.45rem;
+  width:100%;
+  min-height:2.85rem;
+}
+.form input[type="file"]{padding:.55rem .7rem;cursor:pointer}
+.form input:focus,.form select:focus,.form textarea:focus{border-color:var(--accent)}
+.form textarea{min-height:14rem;resize:vertical;line-height:1.55}
+.form textarea.short{min-height:6.5rem}
+.preview-box{margin-top:.35rem;padding:.65rem;border:1px dashed var(--line);border-radius:.45rem;font-size:.92rem;color:var(--soft)}
+.preview-box img{max-height:11rem;border-radius:.35rem;display:block;margin-top:.4rem}
+
+.btn{
+  font:inherit;
+  font-size:1rem;
+  font-weight:600;
+  min-height:2.85rem;
+  padding:.7rem 1.35rem;
+  border:2px solid var(--accent);
+  border-radius:.45rem;
+  background:var(--accent);
+  color:var(--accent-ink);
+  cursor:pointer;
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  text-decoration:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.14);
+  transition:background .15s,border-color .15s,transform .1s;
+}
+.btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.secondary{
+  background:transparent;
+  color:var(--accent);
+  box-shadow:none;
+}
+.btn.secondary:hover{background:var(--accent);color:var(--accent-ink)}
+
+.linkbtn{
+  font:inherit;
+  font-weight:600;
+  padding:.2rem .35rem;
+  border:0;
+  background:none;
+  color:var(--accent);
+  text-decoration:underline;
+  text-underline-offset:.2em;
+  cursor:pointer;
+}
 .note{color:var(--soft);font-size:1rem;margin:0}
-.flinks{display:flex;gap:1.25rem;flex-wrap:wrap}
-footer{margin-top:5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem;position:relative;z-index:2}
+.flinks{display:flex;gap:1.1rem;flex-wrap:wrap}
+footer{margin-top:4.5rem;padding:2rem 0 3rem;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem;position:relative;z-index:2}
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-@media (max-width:34rem){.row{grid-template-columns:1fr}.row time{padding:0 0 .25rem}body{font-size:1.0625rem}}
-@media (prefers-reduced-motion:reduce){.stage .rig,.photo{transition:none}}
+
+/* Mobile Layout Optimization */
+@media (max-width:40rem){
+  body{font-size:1.05rem;line-height:1.65}
+  .wrap{padding:0 1rem}
+  header .wrap{padding-top:.85rem;gap:.65rem}
+  .brand{font-size:1.2rem}
+  nav{width:100%;justify-content:space-between;gap:.35rem;padding-top:.25rem;border-top:1px solid var(--line)}
+  nav a{flex:1;text-align:center;padding:.45rem .5rem;font-size:.92rem}
+  .hero{padding:1.5rem 0 1rem}
+  .cards{grid-template-columns:1fr;gap:.85rem;margin:1.25rem 0}
+  .card{min-height:9rem;padding:1rem 1.1rem}
+  .row{grid-template-columns:1fr;padding:1.15rem 0}
+  .row time{padding:0 0 .25rem;font-size:.88rem}
+  .row h3{font-size:1.25rem}
+  .pdf-frame{height:24rem}
+  .founder-box{flex-direction:column;text-align:center;padding:1.15rem 1rem;gap:1rem}
+  .founder-dp{width:5.75rem;height:5.75rem}
+  .btn{width:100%}
+  .form input,.form select,.form textarea{font-size:16px}
+  footer{margin-top:3rem;padding:1.5rem 0 2.25rem}
+  footer .wrap{flex-direction:column;gap:.75rem}
+}
+@media (prefers-reduced-motion:reduce){.stage .rig,.photo,.card,.btn{transition:none}}
 </style>
 </head>
 <body>
@@ -115,8 +410,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   <div class="wrap">
     <a class="brand" href="#" aria-label="Paigham home"><img src="logo.png" alt="Paigham logo"> Paigham</a>
     <nav aria-label="Main">
-      <a href="#write" id="nav-write">Upload your blog</a>
-      <a href="#about" id="nav-about">About us</a>
+      <a href="#write" id="nav-write">Upload blog</a>
+      <a href="#about" id="nav-about">About</a>
       <a href="#login" id="nav-login">Log in</a>
     </nav>
   </div>
@@ -127,20 +422,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <span>&copy; <span id="year"></span> Paigham</span>
+    <span>&copy; <span id="year"></span> Paigham · M. Sulaiman Saeed</span>
     <span class="flinks">
       <a href="mailto:admin@paigham.live">Email</a>
       <a href="mailto:feedback@paigham.live">Feedback</a>
-      <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">Official Instagram</a>
-      <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener noreferrer">Official Instagram</a>
+      <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener noreferrer">@thesulaimansaeed</a>
     </span>
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="posts.js"></script>
 <script>
 (function () {
@@ -162,12 +457,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     console.error("Supabase init error:", err);
   }
 
-  var user = null, mode = "login", community = [], sciSub = "all";
+  var user = null, mode = "login", community = [], sciSub = "all", lastActionAt = 0;
+  var ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
+  var MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
   var S = {
     science: {
       t: "Science",
-      d: "Discoveries, explainers and notes across Physics, Chemistry and Biology.",
+      d: "Discoveries, explainers, photos and PDFs across Physics, Chemistry and Biology.",
       c: "#2f5d62",
       subs: { all: "All", physics: "Physics", chemistry: "Chemistry", biology: "Biology" }
     },
@@ -188,7 +485,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     },
     philosophy: {
       t: "Philosophy",
-      d: "Share your thoughts, reflections and open questions — and discuss them together.",
+      d: "Share your thoughts, reflections, photos and papers — and discuss them together.",
       c: "#3d4638"
     }
   };
@@ -206,12 +503,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 
   if (window.DOMPurify) {
     DOMPurify.addHook("afterSanitizeAttributes", function (n) {
-      if (n.tagName === "A") { n.setAttribute("rel", "noopener nofollow ugc"); n.setAttribute("target", "_blank"); }
+      if (n.tagName === "A") {
+        n.setAttribute("rel", "noopener noreferrer nofollow ugc");
+        n.setAttribute("target", "_blank");
+      }
     });
   }
 
   function esc(s) {
-    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   function fmt(d) {
     var dt = new Date(String(d).slice(0, 10) + "T00:00:00");
@@ -220,9 +520,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   function mins(t) { return Math.max(1, Math.round(String(t || "").split(/\s+/).length / 220)); }
   function md(t) {
     var raw = window.marked ? marked.parse(String(t || "")) : esc(t);
-    return window.DOMPurify ? DOMPurify.sanitize(raw) : raw;
+    return window.DOMPurify ? DOMPurify.sanitize(raw, { ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i }) : raw;
   }
   function ig(h) { return /^[A-Za-z0-9._]{1,30}$/.test(h || "") ? h : ""; }
+  function safeMediaUrl(u) {
+    if (!u) return "";
+    try {
+      var parsed = new URL(u, location.origin);
+      if (parsed.protocol === "https:" || parsed.origin === location.origin) return parsed.href;
+    } catch (_e) {}
+    return "";
+  }
   function setBg(k) { document.getElementById("photo").style.setProperty("--photo", "url(img/" + (k || "home") + ".jpg)"); }
   function setNav(which, sec) {
     ["write", "about", "login"].forEach(function (k) {
@@ -234,35 +542,137 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
       if (a.dataset.k === sec) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
   }
+
+  function validateFile(file) {
+    if (!file) return null;
+    if (ALLOWED_TYPES.indexOf(file.type) === -1) {
+      return "Unsupported file type. Upload JPG, PNG, WEBP, GIF, or PDF only.";
+    }
+    if (file.size > MAX_BYTES) {
+      return "File is too large. Maximum allowed size is 10 MB.";
+    }
+    return null;
+  }
+
+  function uploadAttachment(file, folder) {
+    if (!file) return Promise.resolve({ url: null, type: null });
+    var err = validateFile(file);
+    if (err) return Promise.reject(new Error(err));
+
+    var ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+    var mediaType = file.type === "application/pdf" ? "pdf" : "image";
+    var path = user.id + "/" + folder + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
+
+    return sb.storage.from("attachments").upload(path, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false
+    }).then(function (res) {
+      if (res.error) throw new Error("Upload failed: " + res.error.message);
+      var pub = sb.storage.from("attachments").getPublicUrl(path);
+      return { url: pub.data.publicUrl, type: mediaType };
+    });
+  }
+
+  function bindFilePreview(inputEl, previewEl) {
+    if (!inputEl || !previewEl) return;
+    inputEl.onchange = function () {
+      var file = inputEl.files && inputEl.files[0];
+      if (!file) { previewEl.innerHTML = ""; return; }
+      var err = validateFile(file);
+      if (err) {
+        previewEl.innerHTML = '<span style="color:#b00020;font-weight:600">' + esc(err) + '</span>';
+        inputEl.value = "";
+        return;
+      }
+      var sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      if (file.type === "application/pdf") {
+        previewEl.innerHTML = '<strong>PDF selected:</strong> ' + esc(file.name) + ' (' + sizeMb + ' MB)';
+      } else {
+        var objUrl = URL.createObjectURL(file);
+        previewEl.innerHTML = '<strong>Photo selected:</strong> ' + esc(file.name) + ' (' + sizeMb + ' MB)<img src="' + objUrl + '" alt="Selected preview">';
+      }
+    };
+  }
+
+  function renderAttachmentBlock(url, type, title) {
+    var clean = safeMediaUrl(url);
+    if (!clean) return "";
+    if (type === "pdf") {
+      return '<div class="media-wrap">' +
+        '<div class="pdf-bar"><span><strong>Attached PDF Document</strong></span>' +
+        '<a class="btn secondary" style="min-height:2.2rem;padding:.35rem .85rem;font-size:.9rem" href="' + esc(clean) + '" target="_blank" rel="noopener noreferrer">Open / Download PDF</a></div>' +
+        '<iframe class="pdf-frame" src="' + esc(clean) + '#view=FitH" title="' + esc(title || "PDF Attachment") + '" loading="lazy"></iframe>' +
+        '</div>';
+    }
+    if (type === "image") {
+      return '<figure class="media-wrap"><img src="' + esc(clean) + '" alt="' + esc(title || "Attached photo") + '" loading="lazy"></figure>';
+    }
+    return "";
+  }
+
   function all() {
     var mine = (Array.isArray(window.POSTS) ? window.POSTS : []).map(function (p) {
-      return { id: p.slug, title: p.title, date: p.date || "2026-01-01", section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: "Sulaiman", ig: "thesulaimansaeed" };
+      return {
+        id: p.slug,
+        title: p.title,
+        date: p.date || "2026-01-01",
+        section: p.section,
+        sub: p.sub_section || "",
+        excerpt: p.excerpt,
+        body: p.body,
+        media_url: p.media_url || "",
+        media_type: p.media_type || "",
+        author: "M. Sulaiman Saeed",
+        ig: "thesulaimansaeed"
+      };
     });
     var com = (Array.isArray(community) ? community : []).map(function (p) {
-      return { id: "c-" + p.id, title: p.title, date: p.created_at || "2026-01-01", section: p.section, sub: p.sub_section || "", excerpt: p.excerpt, body: p.body, author: p.author_name, ig: ig(p.instagram) };
+      return {
+        id: "c-" + p.id,
+        title: p.title,
+        date: p.created_at || "2026-01-01",
+        section: p.section,
+        sub: p.sub_section || "",
+        excerpt: p.excerpt,
+        body: p.body,
+        media_url: p.media_url || "",
+        media_type: p.media_type || "",
+        author: p.author_name,
+        ig: ig(p.instagram)
+      };
     });
     return mine.concat(com).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
   }
+
   function rows(list, emptyMsg) {
-    if (!list.length) return '<p class="empty">' + (emptyMsg || 'Nothing here yet. Be the first: <a href="#write">upload your blog</a>.') + '</p>';
+    if (!list.length) return '<p class="empty">' + (emptyMsg || 'Nothing here yet. Be the first: <a href="#write">upload your blog, photo, or PDF</a>.') + '</p>';
     return '<div>' + list.map(function (p) {
       return '<a class="row" href="#' + encodeURIComponent(p.id) + '"><time datetime="' + String(p.date).slice(0, 10) + '">' + fmt(p.date) + '</time><div><h3></h3><p></p><small></small></div></a>';
     }).join("") + '</div>';
   }
+
   function fillRows(list) {
     var r = app.querySelectorAll(".row");
     list.forEach(function (p, i) {
       var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " · " + S.science.subs[p.sub] : "";
-      r[i].querySelector("h3").textContent = p.title;
+      var h3 = r[i].querySelector("h3");
+      h3.textContent = p.title;
+      if (p.media_type === "pdf" || p.media_type === "image") {
+        var b = document.createElement("span");
+        b.className = "badge";
+        b.textContent = p.media_type === "pdf" ? "PDF" : "Photo";
+        h3.appendChild(b);
+      }
       r[i].querySelector("p").textContent = p.excerpt || "";
       r[i].querySelector("small").textContent = "By " + p.author + (S[p.section] ? " · " + S[p.section].t : "") + subLabel + " · Discussion";
     });
   }
 
   function home() {
-    document.title = "Paigham"; setBg("home");
+    document.title = "Paigham — M. Sulaiman Saeed"; setBg("home");
     var list = all().slice(0, 8);
-    app.innerHTML = '<section class="hero"><h1>Science, crime, model organisms, geopolitics &amp; philosophy.</h1><p>Paigham means message. Read mine, share your thoughts, or log in and publish yours.</p></section>' +
+    app.innerHTML = '<section class="hero"><h1>Science, crime, model organisms, geopolitics &amp; philosophy.</h1><p>Paigham means message — curated by <strong>M. Sulaiman Saeed</strong>. Read essays, or log in to publish your writing, photos, and PDFs.</p></section>' +
       '<div class="cards">' + keys.map(function (k) {
         return '<a class="card" href="#' + k + '" style="--c1:url(img/' + k + '.jpg);--c2:' + S[k].c + '"><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p></a>';
       }).join("") + '</div><h2 class="h2s">Latest</h2>' + rows(list);
@@ -270,7 +680,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   }
 
   function section(k) {
-    document.title = S[k].t + " · Paigham"; setBg(k);
+    document.title = S[k].t + " · Paigham — M. Sulaiman Saeed"; setBg(k);
     var list = all().filter(function (p) { return p.section === k; });
     var subBar = "";
 
@@ -286,7 +696,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     }
 
     var cta = k === "philosophy"
-      ? '<p style="margin-top:1rem"><a class="btn" style="text-decoration:none;display:inline-block" href="#write?section=philosophy">Share a thought</a></p>'
+      ? '<p style="margin-top:1.1rem"><a class="btn" href="#write?section=philosophy">Share a thought, photo, or PDF</a></p>'
       : '';
 
     app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p>' + cta + '</section>' +
@@ -312,14 +722,26 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     }
 
     var formHtml = user
-      ? '<form class="form" id="cform"><label>Add a comment<textarea class="short" name="body" minlength="1" maxlength="2000" placeholder="Share your thoughts on this piece..." required></textarea></label>' +
-        '<button class="btn" type="submit">Post comment</button><p class="note" role="status" id="cmsg"></p></form>'
-      : '<p class="note"><a href="#login">Log in</a> to join the discussion and leave a comment.</p>';
+      ? '<form class="form" id="cform">' +
+        '<label>Add a comment<textarea class="short" name="body" minlength="1" maxlength="2000" placeholder="Share your thoughts on this piece..." required></textarea></label>' +
+        '<label>Attach a photo or PDF (optional, max 10 MB)<input type="file" name="media" id="c-media" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"></label>' +
+        '<div id="c-preview" class="preview-box" style="display:none"></div>' +
+        '<button class="btn" type="submit" id="csub">Post comment</button><p class="note" role="status" id="cmsg"></p></form>'
+      : '<p class="note"><a href="#login">Log in</a> to join the discussion and post comments, photos, or PDFs.</p>';
 
     box.innerHTML = '<section class="comments"><h2>Comments (<span id="ccount">0</span>)</h2><div class="clist" id="clist"><p class="note">Loading comments…</p></div>' + formHtml + '</section>';
 
+    var cMediaInput = document.getElementById("c-media");
+    var cPreview = document.getElementById("c-preview");
+    if (cMediaInput && cPreview) {
+      cMediaInput.addEventListener("change", function () {
+        cPreview.style.display = cMediaInput.files.length ? "block" : "none";
+      });
+      bindFilePreview(cMediaInput, cPreview);
+    }
+
     function loadList() {
-      sb.from("comments").select("id,user_id,author_name,instagram,body,created_at").eq("post_id", postId).order("created_at", { ascending: true })
+      sb.from("comments").select("id,user_id,author_name,instagram,body,media_url,media_type,created_at").eq("post_id", postId).order("created_at", { ascending: true })
         .then(function (r) {
           var items = r.data || [];
           var countEl = document.getElementById("ccount");
@@ -345,7 +767,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
               var a = document.createElement("a");
               a.href = "https://instagram.com/" + ig(c.instagram);
               a.target = "_blank";
-              a.rel = "noopener";
+              a.rel = "noopener noreferrer";
               a.textContent = " (@" + ig(c.instagram) + ")";
               left.appendChild(a);
             }
@@ -369,6 +791,32 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 
             div.appendChild(head);
             div.appendChild(p);
+
+            var cleanMedia = safeMediaUrl(c.media_url);
+            if (cleanMedia) {
+              var mWrap = document.createElement("div");
+              mWrap.className = "cmedia";
+              if (c.media_type === "pdf") {
+                var pdfLink = document.createElement("a");
+                pdfLink.className = "btn secondary";
+                pdfLink.style.minHeight = "2.2rem";
+                pdfLink.style.padding = ".35rem .85rem";
+                pdfLink.style.fontSize = ".9rem";
+                pdfLink.href = cleanMedia;
+                pdfLink.target = "_blank";
+                pdfLink.rel = "noopener noreferrer";
+                pdfLink.textContent = "View Attached PDF";
+                mWrap.appendChild(pdfLink);
+              } else if (c.media_type === "image") {
+                var img = document.createElement("img");
+                img.src = cleanMedia;
+                img.alt = "Comment attachment by " + c.author_name;
+                img.loading = "lazy";
+                mWrap.appendChild(img);
+              }
+              div.appendChild(mWrap);
+            }
+
             clist.appendChild(div);
           });
         });
@@ -380,19 +828,43 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     if (cf) {
       cf.onsubmit = function (e) {
         e.preventDefault();
-        var m = user.user_metadata || {};
+        var now = Date.now();
         var cmsg = document.getElementById("cmsg");
-        cmsg.textContent = "Posting…";
-        sb.from("comments").insert({
-          post_id: postId,
-          author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
-          instagram: ig(m.instagram) || null,
-          body: cf.body.value.trim()
+        var csub = document.getElementById("csub");
+        if (now - lastActionAt < 5000) {
+          cmsg.textContent = "Please wait a few seconds before posting again.";
+          return;
+        }
+        var text = cf.body.value.trim();
+        if (!text) return;
+        var file = cf.media && cf.media.files ? cf.media.files[0] : null;
+        var fileErr = validateFile(file);
+        if (fileErr) { cmsg.textContent = fileErr; return; }
+
+        lastActionAt = now;
+        csub.disabled = true;
+        cmsg.textContent = file ? "Uploading attachment & posting…" : "Posting…";
+
+        uploadAttachment(file, "comment").then(function (uploaded) {
+          var m = user.user_metadata || {};
+          return sb.from("comments").insert({
+            post_id: postId,
+            author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
+            instagram: ig(m.instagram) || null,
+            body: text,
+            media_url: uploaded.url,
+            media_type: uploaded.type
+          });
         }).then(function (r) {
+          csub.disabled = false;
           if (r.error) { cmsg.textContent = "Couldn't post comment: " + r.error.message; return; }
           cf.reset();
+          if (cPreview) { cPreview.innerHTML = ""; cPreview.style.display = "none"; }
           cmsg.textContent = "";
           loadList();
+        }).catch(function (err) {
+          csub.disabled = false;
+          cmsg.textContent = err.message || "Upload error.";
         });
       };
     }
@@ -401,33 +873,49 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   function post(id) {
     var p = all().filter(function (x) { return x.id === id; })[0];
     if (!p) { app.innerHTML = '<p class="empty">That post doesn’t exist. <a href="#">Back to all posts</a></p>'; setNav("", ""); return; }
-    document.title = p.title + " · Paigham"; setBg(p.section);
+    document.title = p.title + " · Paigham — " + p.author; setBg(p.section);
     var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " (" + S.science.subs[p.sub] + ")" : "";
-    app.innerHTML = '<article><p class="meta"></p><h1></h1><div class="prose"></div><p class="by note"></p><div id="comments-box"></div><a class="back" href="#' + p.section + '">Back to ' + (S[p.section] ? S[p.section].t : "all posts") + '</a></article>';
+    var mediaHtml = renderAttachmentBlock(p.media_url, p.media_type, p.title);
+    app.innerHTML = '<article><p class="meta"></p><h1></h1>' + mediaHtml + '<div class="prose"></div><p class="by note"></p><div id="comments-box"></div><a class="back" href="#' + p.section + '">Back to ' + (S[p.section] ? S[p.section].t : "all posts") + '</a></article>';
     app.querySelector(".meta").textContent = fmt(p.date) + " · " + (S[p.section] ? S[p.section].t + subLabel : "") + " · " + mins(p.body) + " min read";
     app.querySelector("h1").textContent = p.title;
     app.querySelector(".prose").innerHTML = md(p.body);
     var by = app.querySelector(".by"); by.textContent = "Written by " + p.author;
-    if (p.ig) { var a = document.createElement("a"); a.href = "https://instagram.com/" + p.ig; a.target = "_blank"; a.rel = "noopener"; a.textContent = "@" + p.ig; by.append(" · Instagram: ", a); }
+    if (p.ig) { var a = document.createElement("a"); a.href = "https://instagram.com/" + p.ig; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = "@" + p.ig; by.append(" · Instagram: ", a); }
     setNav("", p.section);
     renderComments(p.id);
   }
 
-function about() {
-    document.title = "About · Paigham"; setBg("home");
+  function about() {
+    document.title = "About M. Sulaiman Saeed · Paigham"; setBg("home");
     app.innerHTML = '<article><h1>About Paigham</h1><div class="prose">' +
       '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — a space for clear writing and open discussion across science, criminology, model organisms, geopolitics, and philosophy. Every piece here starts with a question worth examining closely, whether from a laboratory bench, a courtroom record, or a shifting map.</p>' +
       '<h2>About the Founder</h2>' +
-      '<p>I’m <strong>M. Sulaiman Saeed</strong>, a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my research work centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on crime, world affairs, and philosophy.</p>' +
-       +
+      '<div class="founder-box">' +
+      '<img id="founder-dp" class="founder-dp" src="dp.jpg" alt="M. Sulaiman Saeed">' +
+      '<p>I’m <strong>M. Sulaiman Saeed</strong> (Muhammad Sulaiman Saeed), a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my research work centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on crime, world affairs, and philosophy.</p>' +
+      '</div>' +
       '<h2>Contribute &amp; Discuss</h2>' +
-      '<p>Paigham isn’t a monologue. Create an account to leave comments on any journal entry, share reflections in the Philosophy tab, or <a href="#write">submit your own article</a> for publication.</p>' +
+      '<p>Paigham isn’t a monologue. Create an account to leave comments with photos or PDFs on any journal entry, share reflections in the Philosophy tab, or <a href="#write">submit your own article, photo, or PDF</a> for publication.</p>' +
       '<h2>Contact</h2><ul>' +
       '<li>Admin Email: <a href="mailto:admin@paigham.live">admin@paigham.live</a></li>' +
       '<li>Feedback: <a href="mailto:feedback@paigham.live">feedback@paigham.live</a></li>' +
-      '<li>Official Instagram: <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener">@paigham.live</a></li>' +
-      '<li>Personal Instagram: <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener">@thesulaimansaeed</a></li>' +
+      '<li>Official Instagram: <a href="https://instagram.com/paigham.live" target="_blank" rel="noopener noreferrer">@paigham.live</a></li>' +
+      '<li>Personal Instagram: <a href="https://instagram.com/thesulaimansaeed" target="_blank" rel="noopener noreferrer">@thesulaimansaeed</a></li>' +
       '</ul></div><a class="back" href="#">Back to all posts</a></article>';
+
+    var dpImg = document.getElementById("founder-dp");
+    if (dpImg) {
+      var fallbacks = ["dp.png", "dp.webp", "dp.jpeg"];
+      var idx = 0;
+      dpImg.onerror = function () {
+        if (idx < fallbacks.length) {
+          dpImg.src = fallbacks[idx++];
+        } else {
+          dpImg.style.display = "none";
+        }
+      };
+    }
     setNav("about", "");
   }
 
@@ -444,7 +932,7 @@ function about() {
         '<form class="form" id="prof" style="margin-top:1.5rem"><label>Display name<input name="name" maxlength="60" required></label>' +
         '<label>Instagram username (shown on your posts &amp; comments)<input name="ig" maxlength="30" placeholder="yourname" pattern="[A-Za-z0-9._]{1,30}"></label>' +
         '<button class="btn" type="submit">Save profile</button><p class="note" role="status" id="msg"></p></form>' +
-        '<p style="margin-top:1.5rem"><button class="btn" id="out" type="button">Log out</button></p></article>';
+        '<p style="margin-top:1.5rem"><button class="btn secondary" id="out" type="button">Log out</button></p></article>';
       app.querySelector(".who").textContent = user.email;
       var f = document.getElementById("prof"); f.name.value = m.name || ""; f.ig.value = m.instagram || "";
       f.onsubmit = function (e) {
@@ -461,11 +949,11 @@ function about() {
     var su = mode === "signup";
     var isInApp = /Instagram|FBAN|FBAV|WhatsApp/i.test(navigator.userAgent);
     var inAppWarning = isInApp
-      ? '<p class="note" style="padding:.75rem;border:1px solid var(--line);border-radius:.4rem;margin-bottom:1rem"><strong>Tip:</strong> You are viewing Paigham inside an app browser, which clears logins when closed. Tap <strong>•••</strong> and choose <strong>Open in Browser</strong> to stay logged in.</p>'
+      ? '<p class="note" style="padding:.85rem;border:1.5px solid var(--accent);border-radius:.45rem;margin-bottom:1.1rem"><strong>Tip:</strong> You are viewing Paigham inside an app browser, which clears logins when closed. Tap <strong>•••</strong> and choose <strong>Open in Browser</strong> to stay logged in.</p>'
       : '';
     app.innerHTML = '<article><h1>' + (su ? "Create account" : "Log in") + '</h1>' +
       inAppWarning +
-      '<form class="form" id="auth" style="max-width:22rem"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
+      '<form class="form" id="auth" style="max-width:24rem"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
       '<label>Password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
       '<button class="btn" type="submit">' + (su ? "Create account" : "Log in") + '</button><p class="note" role="status" id="msg"></p></form>' +
       '<p class="note" style="margin-top:1.5rem">' + (su ? 'Already have an account? <button class="linkbtn" id="flip" type="button">Log in</button>' : 'New here? <button class="linkbtn" id="flip" type="button">Create an account</button>') + '</p></article>';
@@ -487,9 +975,9 @@ function about() {
   function write(defaultSec) {
     document.title = "Upload your blog · Paigham"; setBg("home"); setNav("write", "");
     if (!sb) return needSb("Upload your blog");
-    if (!user) { app.innerHTML = '<article><h1>Upload your blog</h1><div class="prose"><p>Log in first, then you can post or share philosophical thoughts here. <a href="#login">Log in or create an account</a>.</p></div></article>'; return; }
+    if (!user) { app.innerHTML = '<article><h1>Upload your blog</h1><div class="prose"><p>Log in first, then you can publish articles, photos, or PDF documents here. <a href="#login">Log in or create an account</a>.</p></div></article>'; return; }
 
-    app.innerHTML = '<article><h1>Upload your blog or thought</h1><p class="note">Write in Markdown. Posts are reviewed before they appear.</p>' +
+    app.innerHTML = '<article><h1>Upload your blog, photo, or PDF</h1><p class="note">Write in Markdown and optionally attach an image (JPG, PNG, WEBP, GIF) or PDF document (max 10 MB). Posts appear once approved.</p>' +
       '<form class="form" id="wf" style="margin-top:1.5rem">' +
       '<label>Section<select name="section" id="sec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
       '<label id="sub-wrap">Science branch<select name="sub_section">' +
@@ -497,8 +985,10 @@ function about() {
       '</select></label>' +
       '<label>Title<input name="title" minlength="3" maxlength="120" required></label>' +
       '<label>Short summary<input name="excerpt" maxlength="200"></label>' +
-      '<label>Your post<textarea name="body" minlength="20" maxlength="20000" required></textarea></label>' +
-      '<button class="btn" type="submit">Submit for review</button><p class="note" role="status" id="msg"></p></form></article>';
+      '<label>Attach a photo or PDF (optional, max 10 MB)<input type="file" name="media" id="w-media" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"></label>' +
+      '<div id="w-preview" class="preview-box" style="display:none"></div>' +
+      '<label>Your text / caption<textarea name="body" minlength="10" maxlength="20000" placeholder="Write your essay, notes, or description for your attached photo/PDF..." required></textarea></label>' +
+      '<button class="btn" type="submit" id="wsub">Submit for review</button><p class="note" role="status" id="msg"></p></form></article>';
 
     var secSel = document.getElementById("sec-sel");
     var subWrap = document.getElementById("sub-wrap");
@@ -507,24 +997,57 @@ function about() {
     secSel.onchange = toggleSub;
     toggleSub();
 
+    var wMediaInput = document.getElementById("w-media");
+    var wPreview = document.getElementById("w-preview");
+    if (wMediaInput && wPreview) {
+      wMediaInput.addEventListener("change", function () {
+        wPreview.style.display = wMediaInput.files.length ? "block" : "none";
+      });
+      bindFilePreview(wMediaInput, wPreview);
+    }
+
     document.getElementById("wf").onsubmit = function (e) {
       e.preventDefault();
-      var f = e.target, m = user.user_metadata || {}, msg = document.getElementById("msg");
-      msg.textContent = "Submitting…";
-      var payload = {
-        section: f.section.value,
-        sub_section: f.section.value === "science" ? f.sub_section.value : null,
-        title: f.title.value.trim(),
-        excerpt: f.excerpt.value.trim(),
-        body: f.body.value,
-        author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
-        instagram: ig(m.instagram) || null
-      };
-      sb.from("posts").insert(payload).then(function (r) {
+      var now = Date.now();
+      var msg = document.getElementById("msg");
+      var wsub = document.getElementById("wsub");
+      if (now - lastActionAt < 10000) {
+        msg.textContent = "Please wait a few seconds before submitting again.";
+        return;
+      }
+      var f = e.target;
+      var file = f.media && f.media.files ? f.media.files[0] : null;
+      var fileErr = validateFile(file);
+      if (fileErr) { msg.textContent = fileErr; return; }
+
+      lastActionAt = now;
+      wsub.disabled = true;
+      msg.textContent = file ? "Uploading file & submitting…" : "Submitting…";
+
+      uploadAttachment(file, "post").then(function (uploaded) {
+        var m = user.user_metadata || {};
+        var payload = {
+          section: f.section.value,
+          sub_section: f.section.value === "science" ? f.sub_section.value : null,
+          title: f.title.value.trim(),
+          excerpt: f.excerpt.value.trim(),
+          body: f.body.value,
+          media_url: uploaded.url,
+          media_type: uploaded.type,
+          author_name: (m.name || user.email.split("@")[0]).slice(0, 60),
+          instagram: ig(m.instagram) || null
+        };
+        return sb.from("posts").insert(payload);
+      }).then(function (r) {
+        wsub.disabled = false;
         if (r.error) { msg.textContent = "Couldn’t submit: " + r.error.message; return; }
         f.reset();
+        if (wPreview) { wPreview.innerHTML = ""; wPreview.style.display = "none"; }
         toggleSub();
-        msg.textContent = "Submitted. It will appear once approved.";
+        msg.textContent = "Submitted! It will appear once approved.";
+      }).catch(function (err) {
+        wsub.disabled = false;
+        msg.textContent = err.message || "Upload error.";
       });
     };
   }
@@ -545,7 +1068,7 @@ function about() {
 
   function loadCommunity() {
     if (!sb) return Promise.resolve();
-    return sb.from("posts").select("id,title,section,sub_section,excerpt,body,created_at,author_name,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
+    return sb.from("posts").select("id,title,section,sub_section,excerpt,body,media_url,media_type,created_at,author_name,instagram").eq("approved", true).order("created_at", { ascending: false }).limit(100)
       .then(function (r) { community = r.data || []; });
   }
 

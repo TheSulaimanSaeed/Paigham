@@ -1,5 +1,5 @@
 // Lets Paigham install on phones and open even with a weak connection.
-var CACHE = "paigham-v2";
+var CACHE = "paigham-v3.1";
 var SHELL = ["./", "index.html", "config.js", "posts.js", "logo.png", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }));
@@ -13,10 +13,12 @@ self.addEventListener("activate", function (e) {
 });
 self.addEventListener("fetch", function (e) {
   var r = e.request;
-  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return; // never touch Supabase or CDN calls
+  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
   e.respondWith(fetch(r).then(function (res) {
-    var copy = res.clone();
-    caches.open(CACHE).then(function (c) { c.put(r, copy); });
+    if (res && res.ok) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(r, copy); });
+    }
     return res;
   }).catch(function () { return caches.match(r).then(function (m) { return m || caches.match("index.html"); }); }));
 });

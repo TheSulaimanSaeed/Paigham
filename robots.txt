@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://paigham.live/sitemap.xml

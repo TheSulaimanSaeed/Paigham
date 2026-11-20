@@ -4,6 +4,7 @@
   2. section must be one of: science, criminology, models, geopolitics, philosophy
   3. For science posts, optional sub_section: "physics", "chemistry", or "biology"
   4. Change slug (lowercase-with-dashes), title, date (YYYY-MM-DD), excerpt, body (Markdown).
+  5. Optional: media_url (image or PDF URL) and media_type ("image" or "pdf").
 */
 window.POSTS = [
   {
@@ -17,7 +18,7 @@ window.POSTS = [
 ## What you'll find here
 
 - Science (Physics, Chemistry, Biology), Criminology, Model Organisms, Geopolitics, and Philosophy
-- Posts and discussions from readers who log in and write
+- Posts, photos, PDFs, and discussions from readers who log in and write
 
 > A message doesn't need to be loud. It needs to arrive.
 `
