@@ -1,4 +1,4 @@
-const CACHE = "paigham-v3";
+const CACHE = "paigham-v10";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();

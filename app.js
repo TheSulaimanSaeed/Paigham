@@ -27,7 +27,8 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   var pendingEmail = "";
   var recovering = false;
   var community = [];
-  var sciSub = "all";
+  var subSel = {};
+  var flash = "";
   var lastActionAt = 0;
 
   var ALLOWED_IMG = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -35,28 +36,26 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   var MAX_BYTES = 5 * 1024 * 1024;
 
   var S = {
-    science: {
-      t: "Science",
-      d: "Review articles, lab notes, photos, and PDFs across Physics, Chemistry, and Biology.",
-      c: "#0d3b66",
-      subs: { all: "All Branches", physics: "Physics", chemistry: "Chemistry", biology: "Biology" }
-    },
-    art: {
-      t: "Art",
-      d: "Design, video, UX/UI and visual storytelling: projects, case studies, process notes and work in progress.",
-      c: "#0f766e"
-    },
-    politics: {
-      t: "Politics",
-      d: "Share thoughts, essays, and analysis on global power, borders, resources, and world affairs.",
-      c: "#4a3f28"
-    },
-    finance: {
-      t: "Finance",
-      d: "Markets, economics, investing, financial analysis, and economic policy discussions.",
-      c: "#1e3a5f"
-    }
+    science: { t: "Science", label: "SCIENCE", c: "#0d3b66", cta: "Upload Review Article / Study",
+      d: "Reviews, lab notes and explainers in physics, chemistry and biology.",
+      subs: { physics: "Physics", chemistry: "Chemistry", biology: "Biology", "animal-models": "Animal Models" } },
+    tech: { t: "Tech", label: "TECH", c: "#3b4a8a", cta: "Share a Tech Piece",
+      d: "AI, software, security and the tools shaping how we build things.",
+      subs: { ai: "AI & Data", software: "Software & Web", security: "Cybersecurity", hardware: "Hardware", bioinformatics: "Bioinformatics" } },
+    art: { t: "Art", label: "ART & DESIGN", c: "#0f766e", cta: "Share Art and Design Work",
+      d: "Design, video and UX/UI work: case studies, process and finished pieces.",
+      subs: { "ux-ui": "UX / UI", graphic: "Graphic Design", video: "Video & Motion", illustration: "Illustration", photography: "Photography" } },
+    politics: { t: "Politics", label: "POLITICS", c: "#4a3f28", cta: "Share Political Thought",
+      d: "Essays on power, economics and law, and how the world is changing.",
+      subs: { geopolitics: "Geopolitics", economy: "Economy & Finance", law: "Law & Policy", history: "History" } }
   };
+  function subName(sec, sub) { var s = S[sec] && S[sec].subs; return (s && s[sub]) || ""; }
+  function fillSubs(sel, k, cur) {
+    var s = S[k] && S[k].subs;
+    sel.innerHTML = s ? Object.keys(s).map(function (y) { return '<option value="' + y + '">' + s[y] + '</option>'; }).join("") : "";
+    if (s && cur && s[cur]) sel.value = cur;
+    sel.parentNode.style.display = s ? "grid" : "none";
+  }
 
   var keys = Object.keys(S);
   var yearEl = document.getElementById("year");
@@ -294,7 +293,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   function feedCards(list, emptyMsg) {
     if (!list.length) return '<div class="empty">' + (emptyMsg || 'No publications yet. <a href="#write">Publish the first review article, note, photo, or PDF</a>.') + '</div>';
     return '<div class="feed-list">' + list.map(function (p) {
-      var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? S.science.subs[p.sub] : "";
+      var subLabel = subName(p.section, p.sub);
       var typeBadge = p.post_type === "review" ? '<span class="badge review">Review Article</span>'
                     : p.post_type === "thought" ? '<span class="badge">Thought / Reflection</span>' : '';
       var mediaBadge = p.media_type === "pdf" ? '<span class="badge media">PDF</span>'
@@ -340,7 +339,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '</div>' +
       '<div class="side-box">' +
         '<h3>Publish Your Work</h3>' +
-        '<p class="note" style="font-size:.86rem;margin-bottom:.85rem">Upload review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post thoughts on Politics &amp; Finance.</p>' +
+        '<p class="note" style="font-size:.86rem;margin-bottom:.85rem">Upload review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post thoughts on Tech &amp; Politics.</p>' +
         '<a class="btn" style="width:100%;min-height:2.4rem;font-size:.88rem" href="#write">Submit Work</a>' +
       '</div>' +
     '</aside>';
@@ -351,7 +350,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     var list = all().slice(0, 12);
     app.innerHTML = '<section class="hero">' +
       '<div class="hero-eyebrow">پیغام <span>· INDEPENDENT RESEARCH &amp; ESSAYS</span></div>' +
-      '<h1>Science, <em>Art</em>, Politics<br>&amp; <em>Finance.</em></h1>' +
+      '<h1>Science, <em>Tech</em>, Art<br>&amp; <em>Politics.</em></h1>' +
       '<p>An independent space for curious minds — thoughtful research, visual culture, and clear-eyed essays on the forces shaping our world.</p>' +
       '<div class="hero-byline">Founded by <strong>M. Sulaiman Saeed</strong></div>' +
       '<div class="hero-actions">' +
@@ -360,7 +359,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '</div>' +
     '</section>' +
     '<div class="cards">' + keys.map(function (k, i) {
-      var labels = ["SCIENCE", "ART & DESIGN", "POLITICS", "FINANCE"];
+      var labels = keys.map(function (q) { return S[q].label; });
       var roman = ["01", "02", "03", "04"];
       return '<a class="card card-' + k + '" href="#' + k + '"><span class="card-index">' + roman[i] + ' <i>·</i> ' + labels[i] + '</span><h2>' + S[k].t + '</h2><p>' + S[k].d + '</p><span class="card-arrow" aria-hidden="true">↗</span></a>';
     }).join("") + '</div>' +
@@ -372,43 +371,19 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   }
 
   function section(k) {
-    document.title = S[k].t + " · Paigham"; setBg(k);
+    var x = S[k]; document.title = x.t + " · Paigham"; setBg(k);
+    var cur = subSel[k] || "all";
     var list = all().filter(function (p) { return p.section === k; });
-    var subBar = "";
-
-    if (k === "science") {
-      var subs = S.science.subs;
-      subBar = '<div class="subtabs" role="group" aria-label="Science branches">' +
-        Object.keys(subs).map(function (sk) {
-          return '<button type="button" class="subtab" data-sub="' + sk + '" aria-pressed="' + (sciSub === sk) + '">' + subs[sk] + '</button>';
-        }).join("") + '</div>';
-      if (sciSub !== "all") {
-        list = list.filter(function (p) { return p.sub === sciSub; });
-      }
-    }
-
-    var ctaLabel = k === "science" ? "+ Upload Review Article / Study"
-                 : k === "art" ? "+ Share Art and Design Work"
-                 : k === "politics" ? "+ Share Political Thought"
-                 : "+ Share Financial Analysis";
-
-    app.innerHTML = '<section class="hero"><h1>' + S[k].t + '</h1><p>' + S[k].d + '</p>' +
-      '<div class="hero-actions"><a class="btn" href="#write?section=' + k + '">' + ctaLabel + '</a></div></section>' +
-      subBar +
-      '<div class="feed-layout">' +
-        '<div>' + feedCards(list) + '</div>' +
-        sidebarHtml() +
-      '</div>';
+    if (cur !== "all") list = list.filter(function (p) { return p.sub === cur; });
+    var ks = ["all"].concat(Object.keys(x.subs));
+    var subBar = '<div class="subtabs" role="group" aria-label="' + x.t + ' topics">' + ks.map(function (sk) {
+      return '<button type="button" class="subtab" data-sub="' + sk + '" aria-pressed="' + (cur === sk) + '">' + (sk === "all" ? "All" : x.subs[sk]) + '</button>';
+    }).join("") + '</div>';
+    app.innerHTML = '<section class="hero"><h1>' + x.t + '</h1><p>' + x.d + '</p>' +
+      '<div class="hero-actions"><a class="btn" href="#write?section=' + k + '">+ ' + x.cta + '</a></div></section>' +
+      subBar + '<div class="feed-layout"><div>' + feedCards(list) + '</div>' + sidebarHtml() + '</div>';
     setNav("", k);
-
-    if (k === "science") {
-      app.querySelectorAll(".subtab").forEach(function (btn) {
-        btn.onclick = function () {
-          sciSub = btn.dataset.sub;
-          section("science");
-        };
-      });
-    }
+    app.querySelectorAll(".subtab").forEach(function (btn) { btn.onclick = function () { subSel[k] = btn.dataset.sub; section(k); }; });
   }
 
   function renderComments(postId) {
@@ -583,7 +558,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     }
     if (!p) { app.innerHTML = '<div class="empty" style="margin-top:1.5rem">That publication doesn’t exist. <a href="#">Back to home feed</a></div>'; setNav("", ""); return; }
     document.title = p.title + " · Paigham"; setBg(p.section);
-    var subLabel = (p.section === "science" && p.sub && S.science.subs[p.sub]) ? " · " + S.science.subs[p.sub] : "";
+    var subLabel = subName(p.section, p.sub) ? " · " + subName(p.section, p.sub) : "";
     var mediaHtml = renderMedia(p.media_url, p.media_type, p.title);
     var igHtml = p.ig ? ' · <a href="https://instagram.com/' + p.ig + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:600">@' + p.ig + '</a>' : '';
     var isOwner = Boolean(user && p.rawId && p.userId && user.id === p.userId);
@@ -662,9 +637,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         '<p class="note">Update your article details, text, or attachment below.</p>' +
         '<form class="form" id="ef" style="margin-top:1.35rem">' +
           '<label>Category<select name="section" id="esec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
-          '<label id="esub-wrap">Science Branch<select name="sub_section" id="esub-sel">' +
-            '<option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option>' +
-          '</select></label>' +
+          '<label id="esub-wrap">Topic<select name="sub_section" id="esub-sel"></select></label>' +
           '<label>Format<select name="post_type" id="etype-sel">' +
             '<option value="review">Review Article / Literature Synthesis</option>' +
             '<option value="article">Research Note / Essay</option>' +
@@ -692,15 +665,14 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       var typeSel = document.getElementById("etype-sel");
 
       secSel.value = S[item.section] ? item.section : "science";
-      if (item.sub_section) subSel.value = item.sub_section;
+      fillSubs(subSel, secSel.value, item.sub_section);
       if (item.post_type) typeSel.value = item.post_type;
       ef.title.value = item.title || "";
       ef.excerpt.value = item.excerpt || "";
       ef.body.value = item.body || "";
 
-      function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
+      function toggleSub() { fillSubs(subSel, secSel.value); }
       secSel.onchange = toggleSub;
-      toggleSub();
 
       var eMediaInput = document.getElementById("e-media");
       var ePreview = document.getElementById("e-preview");
@@ -736,7 +708,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
           return sb.from("posts").update({
             section: ef.section.value,
-            sub_section: ef.section.value === "science" ? ef.sub_section.value : null,
+            sub_section: ef.sub_section.value || null,
             post_type: ef.post_type.value,
             title: ef.title.value.trim(),
             excerpt: ef.excerpt.value.trim(),
@@ -761,11 +733,11 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   function about() {
     document.title = "About M. Sulaiman Saeed · Paigham"; setBg("home");
     app.innerHTML = '<article class="article-card"><h1>About Paigham</h1><div class="prose">' +
-      '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — an open research and writing platform built for students, researchers, and curious minds to publish review articles across Physics, Chemistry, and Biology, share art, design and video work, and discuss politics and finance.</p>' +
+      '<p><strong>Paigham</strong> (پیغام) means <em>message</em> — an open research and writing platform built for students, researchers, and curious minds to publish review articles across Physics, Chemistry, and Biology, share art, design, tech and video work, and discuss tech and politics.</p>' +
       '<h2>About the Founder</h2>' +
       '<div class="founder-box">' +
       '<img id="founder-dp" class="founder-dp" src="dp.jpg" alt="M. Sulaiman Saeed">' +
-      '<p>I’m <strong>M. Sulaiman Saeed</strong> (Muhammad Sulaiman Saeed), a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my laboratory research centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on global affairs and finance.</p>' +
+      '<p>I’m <strong>M. Sulaiman Saeed</strong> (Muhammad Sulaiman Saeed), a Biology undergraduate at Sakarya University focused on wet-lab cell pathology, histology, toxicology, and CRISPR gene-editing mechanisms. Much of my laboratory research centers on zebrafish (<em>Danio rerio</em>) disease and seizure models, alongside independent writing on tech and global affairs.</p>' +
       '</div>' +
       '<h2>How to Participate</h2>' +
       '<p>Create a free researcher account with your email and password (we confirm your email once with a 6-digit code), set up your profile with your field of study and future research interests, and <a href="#write">submit your review article, photo, or PDF</a>.</p>' +
@@ -825,7 +797,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
           '</div>' +
           '<p class="note" role="status" id="msg"></p>' +
         '</form>' +
-        '<div id="my-posts-box" style="margin-top:2.2rem"></div>' +
+        '<div id="my-posts-box" class="section-divider"></div>' +
       '</article>';
 
       var myBox = document.getElementById("my-posts-box");
@@ -872,14 +844,14 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         '<h2 style="font-size:1.2rem;margin-top:2rem">Change password</h2>' +
         '<form class="form" id="pwf" style="margin-top:.75rem"><label>New password (at least 8 characters)<input type="password" name="pw" minlength="8" autocomplete="new-password" required></label>' +
         '<label>Confirm new password<input type="password" name="pw2" minlength="8" autocomplete="new-password" required></label>' +
-        '<button class="btn" type="submit">Update password</button><p class="note" role="status" id="pwmsg"></p></form>');
+        '<button class="btn" type="submit">Update password</button><p class="note" role="status" id="pwmsg" aria-live="polite"></p></form>');
       document.getElementById("pwf").onsubmit = function (e) {
         e.preventDefault();
         var pm = document.getElementById("pwmsg");
-        if (e.target.pw.value !== e.target.pw2.value) { pm.textContent = "The two passwords don’t match."; return; }
+        if (e.target.pw.value !== e.target.pw2.value) { pm.textContent = "The two passwords don’t match."; pm.className = "form-msg err"; return; }
         pm.textContent = "Updating…";
         sb.auth.updateUser({ password: e.target.pw.value }).then(function (r) {
-          pm.textContent = r.error ? r.error.message : "Password updated.";
+          pm.textContent = r.error ? r.error.message : "Password updated."; pm.className = "form-msg " + (r.error ? "err" : "ok");
           if (!r.error) e.target.reset();
         });
       };
@@ -1009,7 +981,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         vmsg("Checking code…");
         sb.auth.verifyOtp({ email: pendingEmail, token: e.target.token.value.trim(), type: "signup" }).then(function (r) {
           if (r.error) return vmsg(AUTH_ERR(r.error.message));
-          mode = "login";
+          return sb.auth.signOut().then(function () { mode = "login"; flash = "Email confirmed. Please log in with your email and password."; login(); });
         });
       };
       return;
@@ -1089,7 +1061,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       '<form class="form" id="auth">' +
         (su ? '<label>Full Name <span class="req">*</span><input name="name" maxlength="80" placeholder="e.g. Muhammad Sulaiman Saeed" required></label>' +
               '<label>What do you study? <span class="req">*</span><input name="study" maxlength="120" placeholder="e.g. BSc Biology, Chemistry, Physics, Finance" required></label>' +
-              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, UX design, finance" required></label>' : '') +
+              '<label>Future Interests <span class="req">*</span><input name="future" maxlength="300" placeholder="e.g. Zebrafish toxicology, oncology, astrophysics, UX design, AI" required></label>' : '') +
         '<label>Email <span class="req">*</span><input type="email" name="email" autocomplete="email" required></label>' +
         '<label>Password' + (su ? ' (at least 8 characters)' : '') + ' <span class="req">*</span><input type="password" name="password" minlength="8" autocomplete="' + (su ? "new-password" : "current-password") + '" required></label>' +
         (su ? '<label>Confirm Password <span class="req">*</span><input type="password" name="password2" minlength="8" autocomplete="new-password" required></label>' : '') +
@@ -1103,11 +1075,12 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     '</article>';
 
     var msg = function (t) { document.getElementById("msg").textContent = t; };
-    document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; login(); };
+    document.getElementById("flip").onclick = function () { mode = su ? "login" : "signup"; flash = ""; login(); };
+    if (flash) { var fm = document.getElementById("msg"); if (fm) { fm.textContent = flash; fm.className = "form-msg ok"; } }
     if (!su) document.getElementById("forgot").onclick = function () { mode = "forgot"; login(); };
 
     document.getElementById("auth").onsubmit = function (e) {
-      e.preventDefault();
+      e.preventDefault(); flash = "";
       var f = e.target, email = f.email.value.trim(), pw = f.password.value;
       if (su) {
         if (pw !== f.password2.value) return msg("The two passwords don’t match.");
@@ -1118,12 +1091,13 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
         } }).then(function (r) {
           if (r.error) return msg(AUTH_ERR(r.error.message));
           if (r.data.user && r.data.user.identities && !r.data.user.identities.length) return msg("This email already has an account. Log in, or tap “Forgot password”.");
-          if (r.data.session) return; // confirmation is off: already logged in
+          if (r.data.session) { return sb.auth.signOut().then(function () { mode = "login"; flash = "Account created. Please log in."; login(); }); }
           pendingEmail = email; mode = "verify"; login();
         });
       } else {
         msg("Logging in…");
         sb.auth.signInWithPassword({ email: email, password: pw }).then(function (r) {
+          if (!r.error) { mode = "login"; location.hash = ""; return; }
           if (r.error) {
             if (/not confirmed/i.test(r.error.message)) {
               pendingEmail = email;
@@ -1141,7 +1115,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     document.title = "Publish on Paigham · Paigham"; setBg("home"); setNav("write", "");
     if (!sb) return needSb("Publish on Paigham");
     if (!user) {
-      app.innerHTML = '<article class="article-card"><h1>Publish on Paigham</h1><p class="note">Log in or verify your email first to publish review articles across Science, share Art and design work, or post Politics &amp; Finance analyses. <a href="#login" style="color:var(--accent);font-weight:600">Log in or create an account →</a></p></article>';
+      app.innerHTML = '<article class="article-card"><h1>Publish on Paigham</h1><p class="note">Log in or verify your email first to publish review articles across Science, share Art and design work, or post Tech &amp; Politics analyses. <a href="#login" style="color:var(--accent);font-weight:600">Log in or create an account →</a></p></article>';
       return;
     }
 
@@ -1154,12 +1128,10 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
     app.innerHTML = '<article class="article-card">' +
       '<h1>Publish Review Article, Research Note, or Thought</h1>' +
-      '<p class="note">Submit review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post Politics &amp; Finance analyses. Supports Markdown, photos, and PDFs (max 5 MB).</p>' +
+      '<p class="note">Submit review articles across Physics, Chemistry &amp; Biology, share art, design or UX/UI work, or post Tech &amp; Politics analyses. Supports Markdown, photos, and PDFs (max 5 MB).</p>' +
       '<form class="form" id="wf" style="margin-top:1.35rem">' +
         '<label>Category<select name="section" id="sec-sel">' + keys.map(function (k) { return '<option value="' + k + '">' + S[k].t + '</option>'; }).join("") + '</select></label>' +
-        '<label id="sub-wrap">Science Branch<select name="sub_section">' +
-          '<option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option>' +
-        '</select></label>' +
+        '<label id="sub-wrap">Topic<select name="sub_section"></select></label>' +
         '<label>Format<select name="post_type" id="type-sel">' +
           '<option value="review">Review Article / Literature Synthesis</option>' +
           '<option value="article">Research Note / Essay</option>' +
@@ -1180,9 +1152,9 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     var typeSel = document.getElementById("type-sel");
     if (defaultSec && S[defaultSec]) {
       secSel.value = defaultSec;
-      if (defaultSec === "politics" || defaultSec === "finance") typeSel.value = "thought";
+      if (defaultSec === "politics") typeSel.value = "thought";
     }
-    function toggleSub() { subWrap.style.display = secSel.value === "science" ? "grid" : "none"; }
+    function toggleSub() { fillSubs(subWrap.querySelector("select"), secSel.value); }
     secSel.onchange = toggleSub;
     toggleSub();
 
@@ -1213,7 +1185,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
 
         var payload = {
           section: f.section.value,
-          sub_section: f.section.value === "science" ? f.sub_section.value : null,
+          sub_section: f.sub_section.value || null,
           post_type: f.post_type.value,
           title: f.title.value.trim(),
           excerpt: f.excerpt.value.trim(),
@@ -1247,7 +1219,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
     var h = parts[0];
     if (h === "geopolitics") h = "politics";
     else if (h === "models") h = "art";
-    else if (h === "philosophy") h = "finance";
+    else if (h === "finance" || h === "philosophy") h = "politics";
     var params = new URLSearchParams(parts[1] || "");
     if (!h) home();
     else if (S[h]) section(h);
@@ -1314,7 +1286,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
   function refresh() {
     document.getElementById("nav-login").textContent = user ? "My Profile" : "Log in / Join";
     if (recovering) return;
-    if (/^#(login|write|edit\/|c-)/.test(location.hash)) route();
+    if (!location.hash || /^#(login|write|edit\/|c-)/.test(location.hash)) route();
   }
 
   var rig = document.getElementById("rig");
@@ -1344,6 +1316,7 @@ if (window.top !== window.self) { try { window.top.location = window.self.locati
       Promise.all([syncProfileOnLogin(), loadMyPosts()]).then(refresh);
     });
     sb.auth.onAuthStateChange(function (_e, s) {
+      if (_e === "TOKEN_REFRESHED") return;
       user = s ? s.user : null;
       Promise.all([syncProfileOnLogin(), loadMyPosts()]).then(refresh);
     });
